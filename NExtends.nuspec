@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>NExtends</id>
+        <version>$version$</version>
+        <authors>Lucca</authors>
+        <projectUrl>https://github.com/LuccaSA/NExtends</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Extensions c#</description>
+    </metadata>
+    <files>
+        <file src="NExtends\bin\$configuration$\NExtends.dll" target="lib\net451\" />
+    </files>
+</package>
