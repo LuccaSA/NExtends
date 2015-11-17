@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NExtends", "NExtends/NExtends.csproj", "{32C26AF9-5E98-47D2-88FB-621A7CF4EDBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NExtends", "NExtends\NExtends.csproj", "{32C26AF9-5E98-47D2-88FB-621A7CF4EDBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NExtends.Tests", "NExtends.Tests\NExtends.Tests.csproj", "{454535DC-746F-4160-AD28-4D60D34C846F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{32C26AF9-5E98-47D2-88FB-621A7CF4EDBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32C26AF9-5E98-47D2-88FB-621A7CF4EDBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32C26AF9-5E98-47D2-88FB-621A7CF4EDBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454535DC-746F-4160-AD28-4D60D34C846F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454535DC-746F-4160-AD28-4D60D34C846F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454535DC-746F-4160-AD28-4D60D34C846F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454535DC-746F-4160-AD28-4D60D34C846F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

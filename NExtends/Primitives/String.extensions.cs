@@ -403,6 +403,10 @@ namespace NExtends.Primitives
 			{
 				return TimeSpan.Parse(value, culture);
 			}
+			else if (propertyType == typeof(Guid))
+			{
+				return new Guid(value);
+			}
 			else
 			{
 				return Convert.ChangeType(value, propertyType, culture);
