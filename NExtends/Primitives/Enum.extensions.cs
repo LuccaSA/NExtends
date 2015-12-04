@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -137,6 +138,38 @@ namespace NExtends.Primitives
 
 			TEnum lResult;
 			return Enum.TryParse(value, ignoreCase, out lResult) ? lResult : defaultValue;
+		}
+
+		//Courtesy of stackoverflow : http://stackoverflow.com/a/4367868/3535983
+		public static T GetValueFromDescription<T>(string description)
+		{
+			var type = typeof(T);
+			if (!type.IsEnum) throw new InvalidOperationException();
+			foreach (var field in type.GetFields())
+			{
+				var attribute = Attribute.GetCustomAttribute(field,
+					typeof(DescriptionAttribute)) as DescriptionAttribute;
+				if (attribute != null)
+				{
+					if (attribute.Description == description)
+						return (T)field.GetValue(null);
+				}
+				else
+				{
+					if (field.Name == description)
+						return (T)field.GetValue(null);
+				}
+			}
+			throw new ArgumentException("Not found.", "description");
+			// or return default(T);
+		}
+
+		public static string GetDescriptionFromValue<T>(T value)
+		{
+			var type = typeof(T);
+			var memInfo = type.GetMember(value.ToString());
+			var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+			return ((DescriptionAttribute)attributes[0]).Description;
 		}
 	}
 }

@@ -53,11 +53,20 @@ namespace NExtends.Primitives
 			return d.Minute + d.Hour * 60;
 		}
 
+		public static bool IsFirstOfMonth(DateTime d)
+		{
+			return d == FirstOfMonth(d);
+		}
+
 		public static DateTime FirstOfMonth(this DateTime d)
 		{
 			return new DateTime(d.Year, d.Month, 1);
 		}
 
+		public static bool IsLastOfMonth(DateTime d)
+		{
+			return d == LastOfMonth(d);
+		}
 		public static DateTime LastOfMonth(this DateTime d)
 		{
 			return new DateTime(d.Year, d.Month, DateTime.DaysInMonth(d.Year, d.Month));
@@ -133,6 +142,15 @@ namespace NExtends.Primitives
 		public static String ToShortDateTimeString(this DateTime d)
 		{
 			return d.ToShortDateString() + " " + d.ToShortTimeString();
+		}
+		/// <summary>
+		///  new DateTime(2008, 8, 29, 19, 27, 15) ==> août 2008
+		/// </summary>
+		/// <param name="d"></param>
+		/// <returns></returns>
+		public static String ToShortDate(this DateTime d)
+		{
+			return d.ToString("MMM", CultureInfo.CreateSpecificCulture("en-US")) + " " + d.Year;
 		}
 
 		public static String[] dayText = { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche" };
