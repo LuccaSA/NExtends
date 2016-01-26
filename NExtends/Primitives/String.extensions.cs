@@ -407,6 +407,10 @@ namespace NExtends.Primitives
 			{
 				return new Guid(value);
 			}
+			else if (propertyType == typeof(Uri))
+			{
+				return new Uri(value);
+			}
 			else
 			{
 				return Convert.ChangeType(value, propertyType, culture);
