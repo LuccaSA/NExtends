@@ -1,6 +1,11 @@
 # Change log
 
-## 1.1.0 - Integrate with CloudControl
+## 1.0.3 - Uri support
+
+### New features
+ - Strings can be converted to Uri using .ChangeType extension
+
+## 1.0.2 - Integrate with CloudControl
 
 ### New features
  - IsFirstOfMonth()/IsLastOfMonth() pour tester si une date est  la première/dernière du mois
