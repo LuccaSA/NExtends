@@ -1,5 +1,10 @@
 # Change log
 
+## 1.0.4 - HttpRequestMessage extensions
+
+### New features
+ - Extension that gets the IP host address of the remote client
+
 ## 1.0.3 - Uri support
 
 ### New features
