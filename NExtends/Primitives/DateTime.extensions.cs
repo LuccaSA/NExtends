@@ -72,6 +72,8 @@ namespace NExtends.Primitives
 			return new DateTime(d.Year, d.Month, DateTime.DaysInMonth(d.Year, d.Month));
 		}
 
+		public static DateTime Previous(this DateTime d, DayOfWeek day) { return LookFor(d.AddDaysSafe(-1), day, -1); }
+		public static DateTime Next(this DateTime d, DayOfWeek day) { return LookFor(d.AddDaysSafe(1), day, 1); }
 		public static DateTime PreviousOrCurrent(this DateTime d, DayOfWeek day) { return LookFor(d, day, -1); }
 		public static DateTime NextOrCurrent(this DateTime d, DayOfWeek day) { return LookFor(d, day, 1); }
 		static DateTime LookFor(DateTime start, DayOfWeek day, int step)

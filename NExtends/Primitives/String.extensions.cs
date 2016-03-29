@@ -15,7 +15,7 @@ namespace NExtends.Primitives
 {
 	public static class StringExtensions
 	{
-        private const string DEFAULT_ELLIPSIS = "...";
+		private const string DEFAULT_ELLIPSIS = "...";
 
 		public static DateTime ParseJsonDate(this string date)
 		{
@@ -41,7 +41,12 @@ namespace NExtends.Primitives
 		//Validation des numéro de sécu INSEE
 		//version de gabsoftware
 		//http://www.developpez.net/forums/d677820/php/langage/regex/verification-numero-securite-sociale/
-		static Regex isINSEENumber = new Regex(@"^([1-3])[\s\.\-]?(\d{2})[\s\.\-]?(0\d|[2-35-9]\d|[14][0-2])[\s\.\-]?(0[1-9]|[1-9]\d|2[abAB])[\s\.\-]?(\d{3})[\s\.\-]?(\d{3})[\s\.\-\|]{0,3}(?<key>[0-8]\d|9[0-7])?$", RegexOptions.Compiled);
+		private const string REGULAR_INSEE_NUMBER = @"([1-3])[\s\.\-]?(\d{2})[\s\.\-]?(0\d|[2-35-9]\d|[14][0-2])[\s\.\-]?(0[1-9]|[1-9]\d|2[abAB])[\s\.\-]?(\d{3})[\s\.\-]?(\d{3})[\s\.\-\|]{0,3}";
+		private const string TEMPORARY_INSEE_NUMBER = @"(?<temp>[7-9][\s\.\-]?\d{2}[\s\.\-]?\d{2}[\s\.\-]?\d{2}[\s\.\-]?\d{3}[\s\.\-]?\d{3}[\s\.\-\|]?)";
+		private const string KEY_INSEE_NUMBER = @"(?<key>[0-8]\d|9[0-7])?";
+
+		static Regex isINSEENumber = new Regex(String.Format(@"^(({0})|({1})){2}$", REGULAR_INSEE_NUMBER, TEMPORARY_INSEE_NUMBER, KEY_INSEE_NUMBER), RegexOptions.Compiled);
+
 
 		public static bool IsGuid(string candidate)
 		{
@@ -69,6 +74,11 @@ namespace NExtends.Primitives
 				{
 					return false;
 				}
+			}
+			else if (!string.IsNullOrEmpty(match.Groups["temp"].Value))
+			{
+				// Si le numéro est de type temporaire, on impose la clé (donc ça doit passer dans le if au-dessus)
+				return false;
 			}
 
 			return true;
@@ -263,6 +273,10 @@ namespace NExtends.Primitives
 			return KVPValues.SplitPipeValues<string, string>();
 		}
 
+		public static String ToXMLAttribute(this String s)
+		{
+			return HttpUtility.HtmlEncode(s);
+		}
 		public static String ToXML(this String s)
 		{
 			return "<![CDATA[" + s + "]]>";
@@ -341,26 +355,26 @@ namespace NExtends.Primitives
 		{
 			return value.Substring(Math.Max(0, value.Length - count));
 		}
-        /// <summary>
-        /// Tronque la chaîne de caractères à la longueur souhaitée, en ajoutant éventuellement une ellipse 
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="maxLength"></param>
-        /// <param name="useEllipsis"></param>
-        /// <param name="ellipsis"></param>
-        /// <returns></returns>
-        public static String Truncate(this String text, int maxLength, bool useEllipsis = true, string ellipsis = DEFAULT_ELLIPSIS)
-        {
-            if (String.IsNullOrEmpty(text)) return string.Empty;
-            if (text.Length < maxLength) return text;
+		/// <summary>
+		/// Tronque la chaîne de caractères à la longueur souhaitée, en ajoutant éventuellement une ellipse 
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="maxLength"></param>
+		/// <param name="useEllipsis"></param>
+		/// <param name="ellipsis"></param>
+		/// <returns></returns>
+		public static String Truncate(this String text, int maxLength, bool useEllipsis = true, string ellipsis = DEFAULT_ELLIPSIS)
+		{
+			if (String.IsNullOrEmpty(text)) return string.Empty;
+			if (text.Length < maxLength) return text;
 
-            text = text.Substring(0, maxLength);
+			text = text.Substring(0, useEllipsis ? maxLength - ellipsis.Length : maxLength);
 
-            if (useEllipsis)
-                text += ellipsis;
+			if (useEllipsis)
+				text += ellipsis;
 
-            return text;
-        }
+			return text;
+		}
 
 		public static Double ToDouble(this String d)
 		{
@@ -396,7 +410,7 @@ namespace NExtends.Primitives
 		public static object ChangeType(this string value, Type propertyType, IFormatProvider culture)
 		{
 			if (propertyType.IsEnum)
-			{				 
+			{
 				return Enum.Parse(propertyType, value, true);
 			}
 			else if (propertyType.Name.Equals("TimeSpan"))
@@ -619,6 +633,17 @@ namespace NExtends.Primitives
 		public static string IncrementOperand(this string str, int increment = 1)
 		{
 			return String.Format("{0}{1}", str.RemoveOperand(), str.GetOperand() + increment);
+		}
+
+		/// <summary>
+		/// Remove special characters to transform input into an valid file name
+		/// Replaces spaces by dots
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public static string ToFileName(this string input)
+		{
+			return string.IsNullOrEmpty(input) ? input : Regex.Replace(input, @"[^\w. ]+", "").Replace(" ", ".");
 		}
 	}
 }

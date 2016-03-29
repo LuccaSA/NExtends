@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 
 namespace NExtends.Primitives
 {
@@ -168,7 +170,7 @@ namespace NExtends.Primitives
 		/// <returns></returns>
 		public static Dictionary<string, List<string>> ToLowerDotDictionary(this List<string> list)
 		{
-            return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
+			return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
 		}
 
 		/// <summary>
@@ -204,11 +206,11 @@ namespace NExtends.Primitives
 		public static void UpdateKey<T>(this Dictionary<string, T> dict, string oldKey, string newKey)
 		{
 			T value;
-			if(dict.TryGetValue(newKey, out value))
+			if (dict.TryGetValue(newKey, out value))
 			{
 				throw new Exception("The new key is already present in the dictionary");
 			}
-			if(dict.TryGetValue(oldKey, out value))
+			if (dict.TryGetValue(oldKey, out value))
 			{
 				dict.Remove(oldKey);
 				dict.Add(newKey, value);
@@ -244,6 +246,37 @@ namespace NExtends.Primitives
 		public static void AddOrUpdate<K, V>(this ConcurrentDictionary<K, V> dictionary, K key, V value)
 		{
 			dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
+		}
+
+		public static IEnumerable<TResult> Cast<TSource, TResult, ICommonInterface>(this IEnumerable<TSource> collection)
+			where TSource : class, ICommonInterface
+			where TResult : class, ICommonInterface, new()
+		{
+			var sourceProps = (from prop in typeof(TSource).GetProperties() select prop).ToList();
+			var resultProps = (from prop in typeof(TResult).GetProperties() select prop).ToList();
+			var properties = (from prop in typeof(ICommonInterface).GetProperties()
+							 select new
+							 {
+								 source = sourceProps.Where(p => p.Name == prop.Name).FirstOrDefault(),
+								 result = resultProps.Where(p => p.Name == prop.Name).FirstOrDefault()
+							 })
+							 .ToList();
+
+			foreach (var sourceObject in collection)
+			{
+				var resultObject = new TResult();
+
+				foreach (var property in properties)
+				{
+					property.result.SetValue(resultObject, property.source.GetValue(sourceObject, null), null);
+				}
+
+				yield return resultObject;
+			}
+		}
+		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> collection)
+		{
+			return new HashSet<T>(collection);
 		}
 	}
 }

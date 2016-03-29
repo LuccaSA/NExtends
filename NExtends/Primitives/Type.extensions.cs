@@ -7,11 +7,36 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using NExtends.Attributes;
+using System.Linq.Expressions;
 
 namespace NExtends.Primitives
 {
 	public static class TypeExtensions
 	{
+		//http://stackoverflow.com/questions/36032555/compare-propertyinfo-name-to-an-existing-property-in-a-safe-way
+		public static bool IsEqual<T>(this PropertyInfo prop, Expression<Func<T, object>> propertyExpression)
+		{
+			var mbody = propertyExpression.Body as MemberExpression;
+
+			if (mbody == null)
+			{
+				//This will handle Nullable<T> properties.
+				var ubody = propertyExpression.Body as UnaryExpression;
+
+				if (ubody != null)
+				{
+					mbody = ubody.Operand as MemberExpression;
+				}
+
+				if (mbody == null)
+				{
+					throw new ArgumentException("Expression is not a MemberExpression", "propertyExpression");
+				}
+			}
+			return mbody.Member.Name == prop.Name;
+		}
+
 		/// <summary>
 		/// Renvoie le nom c# d'un type
 		/// </summary>
@@ -62,6 +87,21 @@ namespace NExtends.Primitives
 				//gère aussi IEnumerable<T>
 				return (T.GetInterface("IEnumerable`1") ?? T).GetGenericArguments().FirstOrDefault();
 			}
+		}
+
+		/// <summary>
+		/// Given Fun&lt;T&gt; we return T
+		/// </summary>
+		/// <param name="T"></param>
+		/// <returns></returns>
+		public static Type GetNeastedFuncType(this Type T)
+		{
+			if (!T.IsGenericType || T.GetGenericTypeDefinition() != typeof(Func<>))
+			{
+				return T;
+			}
+
+			return T.GetGenericArguments().FirstOrDefault();
 		}
 
 		/// <summary>
@@ -287,6 +327,31 @@ namespace NExtends.Primitives
 			return type.IsValueType || type == typeof(String);
 		}
 
+		/// <summary>
+		/// Renvoie le nom le plus friendly possible (displayName, description, puis nom machine) du type donné
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static string GetFriendlyName(this Type type)
+		{
+			var name = type.GetRealTypeName();
+			var displayNameAttr = type.GetAttribute<CulturedDisplayNameAttribute>();
+			if (displayNameAttr != null)
+			{
+				name = displayNameAttr.DisplayName;
+			}
+			else
+			{
+				var descriptionAttr = type.GetAttribute<DescriptionAttribute>();
+				if (descriptionAttr != null)
+				{
+					name = descriptionAttr.Description;
+				}
+			}
+
+			return name;
+		}
+
 		public static PropertyInfo[] GetFlattenProperties(this Type type, BindingFlags flags)
 		{
 			if (type.IsInterface)
@@ -330,6 +395,30 @@ namespace NExtends.Primitives
 			}
 
 			throw new NotImplementedException();
+		}
+
+		public static TResult Cast<TSource, TResult, ICommonInterface>(this TSource sourceObject)
+			where TSource : class, ICommonInterface
+			where TResult : class, ICommonInterface, new()
+		{
+			var resultObject = new TResult();
+
+			var sourceProps = (from prop in typeof(TSource).GetProperties() select prop).ToList();
+			var resultProps = (from prop in typeof(TResult).GetProperties() select prop).ToList();
+			var properties = (from prop in typeof(ICommonInterface).GetProperties()
+							  select new
+							  {
+								  source = sourceProps.Where(p => p.Name == prop.Name).FirstOrDefault(),
+								  result = resultProps.Where(p => p.Name == prop.Name).FirstOrDefault()
+							  })
+							 .ToList();
+
+			foreach (var property in properties)
+			{
+				property.result.SetValue(resultObject, property.source.GetValue(sourceObject, null), null);
+			}
+
+			return resultObject;
 		}
 	}
 }
