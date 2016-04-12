@@ -56,6 +56,7 @@
     <Compile Include="Primitives\Double.extensions.cs" />
     <Compile Include="Primitives\Enum.extensions.cs" />
     <Compile Include="Primitives\Exception.extensions.cs" />
+    <Compile Include="Primitives\Expression.extensions.cs" />
     <Compile Include="Primitives\Generics.extensions.cs" />
     <Compile Include="Primitives\Int32.extensions.cs" />
     <Compile Include="Primitives\Object.extensions.cs" />
