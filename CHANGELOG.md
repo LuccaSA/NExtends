@@ -1,5 +1,16 @@
 # Change log
 
+## 1.0.5 - Copy/paste from Lucca and more
+
+### New features
+ - Expression.Not() to complete the PredicateBuilder And() and Or() methods
+ - (T or IEnumerable<T>).Cast<T, U, I>() for casting T into U, given that T and U both implement interface I. Only members from I are copied from T to U
+ - CulturedDisplayNameAttribute, in order to avoid repeating the RESX name when using cultured attributes
+ - HtmlUtility for sanitizing incoming HTML data
+ - Better INSEE_NUMBER support in string extensions
+ - TimeSpanExtensions
+ - PropertyInfo.IsEqual(Expression exp)
+
 ## 1.0.4 - HttpRequestMessage extensions
 
 ### New features
