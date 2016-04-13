@@ -14,6 +14,8 @@ if "%nuget%" == "" (
 	set nuget=nuget
 )
 
+nuget restore NExtends.prod.sln
+
 %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild NExtends.prod.sln /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
 
 mkdir Build
