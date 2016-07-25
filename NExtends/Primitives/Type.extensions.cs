@@ -389,7 +389,11 @@ namespace NExtends.Primitives
 			{
 				return Int32.Parse(o.ToString());
 			}
-			if (typeof(T) == typeof(string))
+			else if (typeof(T) == typeof(long))
+			{
+				return long.Parse(o.ToString());
+			}
+			else if (typeof(T) == typeof(string))
 			{
 				return o.ToString();
 			}

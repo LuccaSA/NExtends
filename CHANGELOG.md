@@ -1,5 +1,10 @@
 # Change log
 
+## 1.0.6
+
+### New features
+ - Handling `long` conversion
+
 ## 1.0.5 - Copy/paste from Lucca and more
 
 ### New features
