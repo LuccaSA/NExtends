@@ -1,10 +1,14 @@
 # Change log
 
+## 1.0.7
+
+### New features
+ - Standalone project, with dependencies registration
+
 ## 1.0.6
 
 ### New features
  - Handling `long` conversion
- - Standalone project, with dependencies registration
 
 ## 1.0.5 - Copy/paste from Lucca and more
 
