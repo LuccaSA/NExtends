@@ -4,6 +4,7 @@
 
 ### New features
  - Handling `long` conversion
+ - Standalone project, with dependencies registration
 
 ## 1.0.5 - Copy/paste from Lucca and more
 
