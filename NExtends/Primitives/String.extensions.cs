@@ -306,22 +306,34 @@ namespace NExtends.Primitives
 				return Regex.Split(input, pattern);
 			}
 		}
-		public static String ToUpperSansAccent(this String word)
-		{
-			return word.ToUpper().SansAccent();
-		}
-		public static String SansAccent(this String word)
-		{
-			String AccentFrom = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÌÍÎÏìíîïÙÚÛÜùúûüÿÑñÇç";
-			String AccentTo = "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeIIIIiiiiUUUUuuuuyNnCc";
-			String wordSansAccent = word;
 
-			for (int i = 0; i < AccentFrom.Length; i++)
+		/// <summary>
+		/// http://stackoverflow.com/questions/249087/how-do-i-remove-diacritics-accents-from-a-string-in-net
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public static string RemoveDiacritics(this string text)
+		{
+			var normalizedString = text.Normalize(NormalizationForm.FormD);
+			var stringBuilder = new StringBuilder();
+
+			foreach (var c in normalizedString)
 			{
-				wordSansAccent = wordSansAccent.Replace(AccentFrom[i], AccentTo[i]);
+				var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+				if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+				{
+					stringBuilder.Append(c);
+				}
 			}
-			return wordSansAccent;
+
+			return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
 		}
+
+		public static string RemoveSpecialCaracters(this string text)
+		{
+			return Regex.Replace(text, @"[^a-zA-Z]+", "");
+		}
+
 		//Pour répéter des String xx fois
 		public static String Repeat(this String s, int count)
 		{
@@ -479,39 +491,6 @@ namespace NExtends.Primitives
 			StreamReader sr = new StreamReader(ms);
 			// return the formatted string to caller
 			return sr.ReadToEnd();
-		}
-
-		/// <summary>
-		/// Recherche dans une chaine en utilisant la syntaxe de l'API (en attendant de tout migrer)
-		/// </summary>
-		/// <param name="source">La chaine dans laquelle la recherche est effectue (eg: Hello World)</param>
-		/// <param name="paramName">Le nom du parametre (eg: code)</param>
-		/// <param name="paramValue">La valeur du parametre (eg: like,He)</param>
-		/// <returns>Whether source is starts/is contained/equals the searched value</returns>
-		[Obsolete]
-		public static bool IsMatch(this string source, string paramName, string paramValue)
-		{
-			try
-			{
-				var keyword = paramValue.Split(',')[0];
-				var search = paramValue.Substring(keyword.Length + 1).SansAccent();
-
-				switch (keyword)
-				{
-					case "like":
-						return source.Contains(search, StringComparison.InvariantCultureIgnoreCase);
-
-					case "starts":
-						return source.StartsWith(search, StringComparison.InvariantCultureIgnoreCase);
-
-					default:
-						return source.Equals(search, StringComparison.InvariantCultureIgnoreCase);
-				}
-			}
-			catch
-			{
-				throw new Exception(String.Format(@"The parameter ""{0}"" does not respect String parameters format", paramName));
-			}
 		}
 
 		/// <summary>
