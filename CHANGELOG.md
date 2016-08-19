@@ -1,5 +1,16 @@
 # Change log
 
+## 1.0.8
+
+### New features
+ - .NET 4.6.1 for the projects
+ - RemoveDiacritics : remove accents
+ - RemoveSpecialCaracters : remove everything but letters (a-Z)
+
+### Breaking changes
+ - .NET version upgrade, you have to upgrade your own projects to the same version (4.6.1)
+ - Removed methods ToUpperSansAccent(), SansAccent(), IsMatch(), you have to use new methods instead. There is no equivalent for ToUpperSansAccent(), you habe to do .ToUpper() yourself
+
 ## 1.0.7
 
 ### New features
