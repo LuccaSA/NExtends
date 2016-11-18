@@ -1,5 +1,10 @@
 # Change log
 
+## 1.0.9
+
+### Resolved issues
+ - EnumExtensions.GetAttributeOfType() did not work when enum value had no attribute defined
+
 ## 1.0.8
 
 ### New features
