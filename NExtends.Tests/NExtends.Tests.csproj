@@ -43,10 +43,12 @@
   <ItemGroup>
     <Compile Include="GenericsTests.cs" />
     <Compile Include="GuidTests.cs" />
+    <Compile Include="Models\EnumWithAttribute.cs" />
     <Compile Include="Models\GenericTestsInterfaceI.cs" />
     <Compile Include="Models\GenericTestsClassU.cs" />
     <Compile Include="Models\GenericTestsClassT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EnumExtensionsTests.cs" />
     <Compile Include="StringExtensionsTests.cs" />
     <Compile Include="UriTests.cs" />
   </ItemGroup>

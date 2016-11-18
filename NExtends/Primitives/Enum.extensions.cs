@@ -99,7 +99,13 @@ namespace NExtends.Primitives
 			var type = enumVal.GetType();
 			var memInfo = type.GetMember(enumVal.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
-			return (T)attributes[0];
+
+			if (attributes.Length > 0)
+			{
+				return (T)attributes[0];
+			}
+
+			return null;
 		}
 
 		/// <summary>
