@@ -109,11 +109,11 @@ namespace NExtends.Primitives
 		}
 
 		/// <summary>
-		/// Retourne le nom localisé défini par l'attribut '[DisplayAttribute]' sur les valeurs de l'énumération
+		/// Retourne le DisplayAttribute de l'énumération
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static string GetDisplayName(this Enum value)
+		public static DisplayAttribute GetDisplayAttribute(this Enum value)
 		{
 			var type = value.GetType();
 			CheckIsEnum(type);
@@ -124,12 +124,32 @@ namespace NExtends.Primitives
 			var member = members[0];
 			var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
 			if (attributes.Length == 0)
-				return value.ToString();
+				return null;
 
-			var attribute = (DisplayAttribute)attributes[0];
-			return attribute.GetName();
+			return (DisplayAttribute)attributes[0];
 		}
 
+		/// <summary>
+		/// Retourne le nom localisé défini par l'attribut '[DisplayAttribute]' sur les valeurs de l'énumération
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static string GetDisplayName(this Enum value)
+		{
+			var attribute = GetDisplayAttribute(value);
+			return attribute == null ? "" : attribute.GetName();
+		}
+
+		/// <summary>
+		/// Retourne la description localisée définie par l'attribut '[DisplayAttribute]' sur les valeurs de l'énumération
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static string GetDisplayDescription(this Enum value)
+		{
+			var attribute = GetDisplayAttribute(value);
+			return attribute == null ? "" : attribute.GetDescription();
+		}
 
 		/// <summary>
 		/// Parse string to enum, with default value and optional case insensivity

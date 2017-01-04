@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -77,7 +78,7 @@ namespace NExtends.Primitives
 				return T;
 			}
 			// On est sûr que c'est un type Enumerable<> ou un Array
-			// Donc si c'est pas un Array, on retourn le type generique
+			// Donc si c'est pas un Array, on retourne le type generique
 			if (T.IsArray)
 			{
 				return T.GetElementType();
@@ -213,8 +214,10 @@ namespace NExtends.Primitives
 				return null;
 
 			// If the given type is non nullable, just return it
-			if (!TypeToConvert.IsTypeNullable())
+			if (!TypeToConvert.IsNullableValueType())
+			{
 				return TypeToConvert;
+			}
 			else
 			{
 				return TypeToConvert.GetGenericArguments()[0];
@@ -322,6 +325,11 @@ namespace NExtends.Primitives
 				| BindingFlags.Public | BindingFlags.Instance);
 		}
 
+		/// <summary>
+		/// type.IsValueType || type == typeof(String)
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		public static bool IsValueType(this Type type)
 		{
 			return type.IsValueType || type == typeof(String);
@@ -381,6 +389,22 @@ namespace NExtends.Primitives
 			{
 				return type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance | flags);
 			}
+		}
+
+		public static PropertyInfo[] GetPublicPropertiesIncludingExplicitInterfaceImplementations(this Type type)
+		{
+			var classProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+			var interfacesProperties = type.GetInterfaces().SelectMany(i => i.GetProperties());
+
+			return classProperties.Union(interfacesProperties).Distinct(new GenericEqualityComparer<PropertyInfo>((p1, p2) => p1.Name == p2.Name)).ToArray();
+		}
+
+		public static PropertyInfo[] GetPublicOrInternalPropertiesIncludingExplicitInterfaceImplementations(this Type type)
+		{
+			var classProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			var interfacesProperties = type.GetInterfaces().SelectMany(i => i.GetProperties());
+
+			return classProperties.Union(interfacesProperties).Distinct(new GenericEqualityComparer<PropertyInfo>((p1, p2) => p1.Name == p2.Name)).ToArray();
 		}
 
 		public static object Convert<T>(object o)
