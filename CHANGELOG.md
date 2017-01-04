@@ -1,5 +1,11 @@
 # Change log
 
+## 1.0.10
+
+### New features
+ - RequiredIfAttribute : aims to specify a condition against entity validation
+ - GetPublicPropertiesIncludingExplicitInterfaceImplementations : various classes for retreiving entity properties
+
 ## 1.0.9
 
 ### Resolved issues
