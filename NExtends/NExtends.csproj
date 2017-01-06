@@ -65,6 +65,7 @@
     <Compile Include="Attributes\CulturedDescriptionAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\CulturedDisplayNameAttribute.cs" />
+    <Compile Include="Context\CultureContext.cs" />
     <Compile Include="Helpers\HtmlUtility.cs" />
     <Compile Include="Http\HttpRequestMessage.exstensions.cs" />
     <Compile Include="Primitives\DateTime.extensions.cs" />

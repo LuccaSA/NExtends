@@ -15,7 +15,6 @@ namespace NExtends.Attributes
 		private String PropertyName { get; set; }
 		private Object DesiredValue { get; set; }
 
-
 		public RequiredIfAttribute()
 		{
 		}
@@ -30,13 +29,13 @@ namespace NExtends.Attributes
 		{
 			Object instance = context.ObjectInstance;
 			Type type = instance.GetType();
-			Object proprtyvalue = type.GetProperty(PropertyName).GetValue(instance, null);
-			// TODO spécialiser ce test par type: Enum, IEquatable, Parse, ...
-			if (proprtyvalue.ToString() == DesiredValue.ToString())
+			Object propertyValue = type.GetProperty(PropertyName).GetValue(instance, null);
+
+			if (propertyValue.ToString() == DesiredValue.ToString())
 			{
-				ValidationResult result = base.IsValid(value, context);
-				return result;
+				return base.IsValid(value, context);
 			}
+
 			return ValidationResult.Success;
 		}
 	}
