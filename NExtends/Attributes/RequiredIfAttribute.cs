@@ -15,7 +15,6 @@ namespace NExtends.Attributes
 		private String PropertyName { get; set; }
 		private Object DesiredValue { get; set; }
 
-
 		public RequiredIfAttribute()
 		{
 		}
@@ -34,11 +33,10 @@ namespace NExtends.Attributes
 
 			if (propertyValue.ToString() == DesiredValue.ToString())
 			{
-				ValidationResult result = base.IsValid(value, context);
-				return result;
+				return base.IsValid(value, context);
 			}
 
-			return base.IsValid(value, context);
+			return ValidationResult.Success;
 		}
 	}
 }
