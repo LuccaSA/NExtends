@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\iLucca.net\packages\NExtends.1.0.8\lib\net451\</OutputPath>
+    <OutputPath>..\..\ilucca.net\packages\NExtends.1.0.11\lib\net451\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -65,6 +65,8 @@
     <Compile Include="Attributes\CulturedDescriptionAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\CulturedDisplayNameAttribute.cs" />
+    <Compile Include="Collections\DictionaryListMapper.cs" />
+    <Compile Include="Collections\ObjectPropertiesList.cs" />
     <Compile Include="Context\CultureContext.cs" />
     <Compile Include="Helpers\HtmlUtility.cs" />
     <Compile Include="Http\HttpRequestMessage.exstensions.cs" />
