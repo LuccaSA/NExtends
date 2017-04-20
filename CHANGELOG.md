@@ -1,5 +1,10 @@
 # Change log
 
+## 1.1.1
+
+### Resolved issues
+ - IEnumerable isNullOrEmpty cleanup
+
 ## 1.1.0
 
 ### Breaking changes
