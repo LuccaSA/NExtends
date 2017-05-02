@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Resources;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NExtends.Attributes
 {
@@ -15,7 +11,7 @@ namespace NExtends.Attributes
 
 		public string DisplayName
 		{
-			get { return ResxManager.GetString(TermName, Thread.CurrentThread.CurrentCulture); }
+			get { return ResxManager.GetString(TermName, CultureInfo.CurrentCulture); }
 		}
 
 		public CulturedDisplayNameAttribute(ResourceManager resxManager, string resxName)

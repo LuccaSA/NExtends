@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NExtends.Attributes;
 using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,32 +35,9 @@ namespace NExtends.Primitives.Types
 			return mbody.Member.Name == prop.Name;
 		}
 
-		/// <summary>
-		/// Renvoie le nom c# d'un type
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public static string GetOriginalName(this Type type)
-		{
-			var typeName = type.FullName.Replace(type.Namespace + ".", "");
-
-			//CSharp ou VisualBasic
-			var niceName = typeName == "Void" ? "void" : CodeDomProvider.CreateProvider("CSharp").GetTypeOutput(new CodeTypeReference(typeName));
-
-			if (type.GetGenericArguments().Length == 0)
-			{
-				return niceName;
-			}
-			else
-			{
-				niceName = niceName.Split("<")[0];
-				return niceName + "<" + string.Join(",", type.GetGenericArguments().Select(GetOriginalName)) + ">";
-			}
-		}
-
 		public static T GetAttribute<T>(this MemberInfo member) where T : Attribute
 		{
-			return Attribute.IsDefined(member, typeof(T)) ? (T)member.GetCustomAttributes(typeof(T), false)[0] : null;
+			return member.IsDefined(typeof(T)) ? (T)member.GetCustomAttributes(typeof(T), false).ElementAt(0) : null;
 		}
 
 		public static bool IsEnumerableOrArray(this Type T)
@@ -85,7 +60,7 @@ namespace NExtends.Primitives.Types
 			else
 			{
 				//gère aussi IEnumerable<T>
-				return (T.GetInterface("IEnumerable`1") ?? T).GetGenericArguments().FirstOrDefault();
+				return (T.GetTypeInfo().GetInterface("IEnumerable`1") ?? T).GetGenericArguments().FirstOrDefault();
 			}
 		}
 
@@ -96,7 +71,7 @@ namespace NExtends.Primitives.Types
 		/// <returns></returns>
 		public static Type GetNeastedFuncType(this Type T)
 		{
-			if (!T.IsGenericType || T.GetGenericTypeDefinition() != typeof(Func<>))
+			if (!T.GetTypeInfo().IsGenericType || T.GetGenericTypeDefinition() != typeof(Func<>))
 			{
 				return T;
 			}
@@ -115,12 +90,13 @@ namespace NExtends.Primitives.Types
 		{
 			while (toCheck != null && toCheck != typeof(object))
 			{
-				var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+				var info = toCheck.GetTypeInfo();
+				var cur = info.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
 				if (generic == cur)
 				{
 					return true;
 				}
-				toCheck = toCheck.BaseType;
+				toCheck = info.BaseType;
 			}
 			return false;
 		}
@@ -137,7 +113,7 @@ namespace NExtends.Primitives.Types
 
 			foreach (var interfaceOfCheck in interfaces)
 			{
-				if (interfaceOfCheck.IsGenericType)
+				if (interfaceOfCheck.GetTypeInfo().IsGenericType)
 				{
 					if (interfaceOfCheck.GetGenericTypeDefinition() == interfaceType)
 					{
@@ -163,9 +139,10 @@ namespace NExtends.Primitives.Types
 		/// <returns></returns>
 		public static string GetRealTypeName(this Type type)
 		{
-			if (!Attribute.IsDefined(type, typeof(JsonObjectAttribute), false))
+			var info = type.GetTypeInfo();
+			if (info.IsDefined(typeof(JsonObjectAttribute), false))
 			{
-				return (type.BaseType ?? type).Name; //Au cas où BaseType est null, on prend le type lui même (cas du type Object par ex)
+				return (info.BaseType ?? type).Name; //Au cas où BaseType est null, on prend le type lui même (cas du type Object par ex)
 			}
 			else
 			{
@@ -199,7 +176,7 @@ namespace NExtends.Primitives.Types
 				return TypeToConvert;
 
 			// If the type is a ValueType and is not System.Void, convert it to a Nullable<Type>
-			if (TypeToConvert.IsValueType && TypeToConvert != typeof(void))
+			if (TypeToConvert.GetTypeInfo().IsValueType && TypeToConvert != typeof(void))
 				return typeof(Nullable<>).MakeGenericType(TypeToConvert);
 
 			// Done - no conversion
@@ -245,13 +222,14 @@ namespace NExtends.Primitives.Types
 			if (TypeToTest == null)
 				return false;
 
+			var info = TypeToTest.GetTypeInfo();
 			// If this is not a value type, it is a reference type, so it is automatically nullable
 			//  (NOTE: All forms of Nullable<T> are value types)
-			if (!TypeToTest.IsValueType)
+			if (!info.IsValueType)
 				return true;
 
 			// Report whether TypeToTest is a form of the Nullable<> type
-			return TypeToTest.IsGenericType && TypeToTest.GetGenericTypeDefinition() == typeof(Nullable<>);
+			return info.IsGenericType && TypeToTest.GetGenericTypeDefinition() == typeof(Nullable<>);
 		}
 
 		/// <summary>
@@ -276,7 +254,7 @@ namespace NExtends.Primitives.Types
 				return false;
 
 			// Report whether TypeToTest is a form of the Nullable<> type
-			return TypeToTest.IsGenericType && TypeToTest.GetGenericTypeDefinition() == typeof(Nullable<>);
+			return TypeToTest.GetTypeInfo().IsGenericType && TypeToTest.GetGenericTypeDefinition() == typeof(Nullable<>);
 		}
 
 		/// <summary>
@@ -287,7 +265,7 @@ namespace NExtends.Primitives.Types
 		/// <returns></returns>
 		public static PropertyInfo[] GetPublicProperties(this Type type)
 		{
-			if (type.IsInterface)
+			if (type.GetTypeInfo().IsInterface)
 			{
 				var propertyInfos = new List<PropertyInfo>();
 
@@ -331,7 +309,7 @@ namespace NExtends.Primitives.Types
 		/// <returns></returns>
 		public static bool IsValueType(this Type type)
 		{
-			return type.IsValueType || type == typeof(String);
+			return type.GetTypeInfo().IsValueType || type == typeof(String);
 		}
 
 		/// <summary>
@@ -342,14 +320,15 @@ namespace NExtends.Primitives.Types
 		public static string GetFriendlyName(this Type type)
 		{
 			var name = type.GetRealTypeName();
-			var displayNameAttr = type.GetAttribute<CulturedDisplayNameAttribute>();
+			var info = type.GetTypeInfo();
+			var displayNameAttr = info.GetAttribute<CulturedDisplayNameAttribute>();
 			if (displayNameAttr != null)
 			{
 				name = displayNameAttr.DisplayName;
 			}
 			else
 			{
-				var descriptionAttr = type.GetAttribute<DescriptionAttribute>();
+				var descriptionAttr = info.GetAttribute<DescriptionAttribute>();
 				if (descriptionAttr != null)
 				{
 					name = descriptionAttr.Description;
@@ -361,7 +340,7 @@ namespace NExtends.Primitives.Types
 
 		public static PropertyInfo[] GetFlattenProperties(this Type type, BindingFlags flags)
 		{
-			if (type.IsInterface)
+			if (type.GetTypeInfo().IsInterface)
 			{
 				var propertyInfos = new List<PropertyInfo>();
 

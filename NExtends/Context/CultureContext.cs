@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading;
 
 namespace NExtends.Context
 {
@@ -11,17 +10,17 @@ namespace NExtends.Context
 
 		public CultureContext(CultureInfo culture)
 		{
-			originalCulture = Thread.CurrentThread.CurrentCulture;
-			originalUICulture = Thread.CurrentThread.CurrentUICulture;
+			originalCulture = CultureInfo.CurrentCulture;
+			originalUICulture = CultureInfo.CurrentUICulture;
 
-			Thread.CurrentThread.CurrentCulture = culture;
-			Thread.CurrentThread.CurrentUICulture = culture;
+			CultureInfo.CurrentCulture = culture;
+			CultureInfo.CurrentUICulture = culture;
 		}
 
 		public void Dispose()
 		{
-			Thread.CurrentThread.CurrentCulture = originalCulture;
-			Thread.CurrentThread.CurrentUICulture = originalUICulture;
+			CultureInfo.CurrentCulture = originalCulture;
+			CultureInfo.CurrentUICulture = originalUICulture;
 		}
 	}
 }

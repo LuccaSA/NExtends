@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 
@@ -75,19 +73,6 @@ namespace NExtends.Primitives
 			{
 				collection.Remove(element);
 			}
-		}
-
-		//Pour pouvoir écrire dans une NameValueCollection, il faut la convertir en Dictionnary
-		public static Dictionary<string, string> ToDictionary(this NameValueCollection collection)
-		{
-			Dictionary<string, string> dico = new Dictionary<string, string>();
-
-			foreach (string key in collection.AllKeys)
-			{
-				dico.Add(key, collection[key]);
-			}
-
-			return dico;
 		}
 
 		public enum SortOrder { Ascending, Descending };

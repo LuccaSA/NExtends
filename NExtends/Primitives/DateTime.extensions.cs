@@ -141,9 +141,11 @@ namespace NExtends.Primitives
 			int weekNum = ciCurr.Calendar.GetWeekOfYear(d, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 			return weekNum;
 		}
+
+		//https://github.com/dotnet/coreclr/issues/2317
 		public static String ToShortDateTimeString(this DateTime d)
 		{
-			return d.ToShortDateString() + " " + d.ToShortTimeString();
+			return d.ToString("d") + " " + d.ToString("t");
 		}
 		/// <summary>
 		///  new DateTime(2008, 8, 29, 19, 27, 15) ==> août 2008
@@ -152,7 +154,7 @@ namespace NExtends.Primitives
 		/// <returns></returns>
 		public static String ToShortDate(this DateTime d)
 		{
-			return d.ToString("MMM", CultureInfo.CreateSpecificCulture("en-US")) + " " + d.Year;
+			return d.ToString("MMM", new CultureInfo("en-US")) + " " + d.Year;
 		}
 
 		public static String[] dayText = { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche" };
@@ -176,11 +178,6 @@ namespace NExtends.Primitives
 			{
 				return date.AddDays(0); //Permet de renvoyer une "copie" de la date et pas un pointeur vers la date elle-même
 			}
-		}
-
-		public static String toShortUserFormat(this DateTime date, int format)
-		{
-			return date.ToString(CultureInfo.GetCultureInfo(format).DateTimeFormat.ShortDatePattern);
 		}
 
 		public static int GetDifferenceInFullYearsWith(this DateTime firstDate, DateTime secondDate)

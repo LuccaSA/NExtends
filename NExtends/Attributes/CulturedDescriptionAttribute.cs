@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.Globalization;
 
 namespace NExtends.Attributes
 {
@@ -13,10 +11,7 @@ namespace NExtends.Attributes
 		string TermName { get; set; }
 		ResourceManager ResxManager { get; set; }
 
-		public string Description
-		{
-			get { return ResxManager.GetString(TermName, Thread.CurrentThread.CurrentCulture); }
-		}
+		public string Description => ResxManager.GetString(TermName, CultureInfo.CurrentCulture);
 
 		public CulturedDescriptionAttribute(ResourceManager resxManager, string resxName)
 		{
@@ -34,7 +29,7 @@ namespace NExtends.Attributes
 			var type = enumValue.GetType();
 			var memInfo = type.GetMember(enumValue.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(CulturedDescriptionAttribute), false);
-			return (attributes.Length > 0) ? ((CulturedDescriptionAttribute)attributes[0]).Description : String.Empty;
+			return (attributes.Count() > 0) ? ((CulturedDescriptionAttribute)attributes.ElementAt(0)).Description : String.Empty;
 		}
 	}
 }

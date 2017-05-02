@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace NExtends.Attributes
 {
@@ -29,7 +24,7 @@ namespace NExtends.Attributes
 		{
 			Object instance = context.ObjectInstance;
 			Type type = instance.GetType();
-			Object propertyValue = type.GetProperty(PropertyName).GetValue(instance, null);
+			Object propertyValue = type.GetTypeInfo().GetProperty(PropertyName).GetValue(instance, null);
 
 			if (propertyValue.ToString() == DesiredValue.ToString())
 			{

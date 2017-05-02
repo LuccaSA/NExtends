@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 
 namespace NExtends.Primitives
 {
@@ -16,7 +16,7 @@ namespace NExtends.Primitives
 		public static void CheckIsEnum<T>() where T : struct { CheckIsEnum(typeof(T)); }
 		static void CheckIsEnum(Type t)
 		{
-			if (!t.IsEnum)
+			if (!t.GetTypeInfo().IsEnum)
 				throw new ArgumentException(string.Format("Type '{0}' is not Enum", t));
 		}
 
@@ -100,9 +100,9 @@ namespace NExtends.Primitives
 			var memInfo = type.GetMember(enumVal.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
 
-			if (attributes.Length > 0)
+			if (attributes.Count() > 0)
 			{
-				return (T)attributes[0];
+				return (T)attributes.ElementAt(0);
 			}
 
 			return null;
@@ -123,10 +123,10 @@ namespace NExtends.Primitives
 
 			var member = members[0];
 			var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
-			if (attributes.Length == 0)
+			if (attributes.Count() == 0)
 				return null;
 
-			return (DisplayAttribute)attributes[0];
+			return (DisplayAttribute)attributes.ElementAt(0);
 		}
 
 		/// <summary>
@@ -170,11 +170,10 @@ namespace NExtends.Primitives
 		public static T GetValueFromDescription<T>(string description)
 		{
 			var type = typeof(T);
-			if (!type.IsEnum) throw new InvalidOperationException();
+			if (!type.GetTypeInfo().IsEnum) throw new InvalidOperationException();
 			foreach (var field in type.GetFields())
 			{
-				var attribute = Attribute.GetCustomAttribute(field,
-					typeof(DescriptionAttribute)) as DescriptionAttribute;
+				var attribute = field.GetCustomAttribute(typeof(DescriptionAttribute)) as DescriptionAttribute;
 				if (attribute != null)
 				{
 					if (attribute.Description == description)
@@ -192,10 +191,10 @@ namespace NExtends.Primitives
 
 		public static string GetDescriptionFromValue<T>(T value)
 		{
-			var type = typeof(T);
-			var memInfo = type.GetMember(value.ToString());
+			var info = typeof(T).GetTypeInfo();
+			var memInfo = info.GetMember(value.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-			return ((DescriptionAttribute)attributes[0]).Description;
+			return ((DescriptionAttribute)attributes.ElementAt(0)).Description;
 		}
 	}
 }
