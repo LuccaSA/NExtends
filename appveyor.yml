@@ -16,10 +16,55 @@ assembly_info:
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
 
+environment:
+  SONAR_TOKEN:
+    secure: LScTgkadM+dsPa7ZdoGB9VnW26CSOWHVk0MINZuIh60cisvTd20n9GOAZPp/Nh4e
+  COVERALLS_TOKEN:
+    secure: 0pG+GZJxuLVsEJPgOqeiMmRAlwWvm4W3QaagoX6FJ/oSqCgPO3V9/w8r8HjhN/0B
+  GITHUB_ACCESS_TOKEN:
+    secure: 4mw9uwMEkmIPucv0Aa6cziU8QdwKEzRCqOf2HWFRVdheolRbZJN4zWnnZjW+W0dL
+
 before_build:
 - cmd: >-
     nuget restore NExtends.sln
 
+    choco install "msbuild-sonarqube-runner" -y
+
+    nuget install OpenCover -Version 4.6.519
+
+    nuget install coveralls.net -Version 0.7.0
+
+    IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"NExtends" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SONAR_TOKEN%"
+    ) ELSE (
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"NExtends" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=LuccaSA/NExtends" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
+    )
+
+test: off
+
 build:
   project: NExtends.sln
   verbosity: minimal
+
+test_script:
+- cmd: >-
+    .\OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -register:user -target:"packages\xunit.runner.console.2.1.0\tools\xunit.console.exe" -targetargs:"test\NExtends.Tests\bin\%CONFIGURATION%\NExtends.Tests.dll -noshadow -appveyor"  -filter:"+[NExtends*]* -[NExtends.Tests]*" -output:opencoverCoverage.xml -coverbytest:*.Test.dll 
+
+    .\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencoverCoverage.xml --repoToken %COVERALLS_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch "%APPVEYOR_REPO_BRANCH%" --commitAuthor "%APPVEYOR_REPO_COMMIT_AUTHOR%" --commitEmail "%APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL%" --commitMessage "%APPVEYOR_REPO_COMMIT_MESSAGE%" --jobId %APPVEYOR_JOB_ID% 
+after_build:
+- cmd: >-
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe end /d:"sonar.login=%SONAR_TOKEN%"
+
+artifacts:
+  # pushing all *.nupkg files in build directory recursively
+  - path: '**\*.nupkg'
+
+deploy:
+    # Deploying to Lucca NuGet feed
+  - provider: NuGet
+    server: https://my.nuget.server/feed
+    api_key:
+      secure: lYwRqidcdb/MXh7+vasEZrV/zkkUR6TVM02fKKOCB9A=
+    skip_symbols: true
+    # symbol_server: https://your.symbol.server/feed
+    artifact: NExtends.nupkg
