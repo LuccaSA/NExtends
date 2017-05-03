@@ -48,10 +48,10 @@ build:
 
 test_script:
 - cmd: >-
-    cd NExtends.Tests &
-    ..\OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"xunit -noshadow -appveyor" -oldstyle -filter:"+[NExtends*]* -[NExtends.Tests]*" -output:opencoverCoverage.xml -coverbytest:*.Test.dll 
-- cmd: >-
-    .\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencoverCoverage.xml --repoToken %COVERALLS_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch "%APPVEYOR_REPO_BRANCH%" --commitAuthor "%APPVEYOR_REPO_COMMIT_AUTHOR%" --commitEmail "%APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL%" --commitMessage "%APPVEYOR_REPO_COMMIT_MESSAGE%" --jobId %APPVEYOR_JOB_ID% 
+    cd NExtends.Tests & dotnet xunit
+#    ..\OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"xunit -noshadow -appveyor" -oldstyle -filter:"+[NExtends*]* -[NExtends.Tests]*" -output:opencoverCoverage.xml -coverbytest:*.Test.dll 
+#- cmd: >-
+#    .\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencoverCoverage.xml --repoToken %COVERALLS_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch "%APPVEYOR_REPO_BRANCH%" --commitAuthor "%APPVEYOR_REPO_COMMIT_AUTHOR%" --commitEmail "%APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL%" --commitMessage "%APPVEYOR_REPO_COMMIT_MESSAGE%" --jobId %APPVEYOR_JOB_ID% 
 after_build:
 - cmd: >-
     C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe end /d:"sonar.login=%SONAR_TOKEN%"
