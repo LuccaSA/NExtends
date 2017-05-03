@@ -33,5 +33,21 @@ namespace NExtends.Tests
 
 			Assert.Equal(expected, result);
 		}
+
+		[Theory]
+		[InlineData("toto")]
+		[InlineData("toto@l")]
+		[InlineData("toto@lucca")]
+		public void ShouldReturnFalseWhenTextIsNotEmail(string value)
+		{
+			Assert.False(value.isEmail());
+		}
+
+		[Theory]
+		[InlineData("toto@lucca.fr")]
+		public void ShouldReturnTrueWhenTextIsEmail(string value)
+		{
+			Assert.True(value.isEmail());
+		}
 	}
 }

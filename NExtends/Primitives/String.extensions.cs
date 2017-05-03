@@ -88,15 +88,9 @@ namespace NExtends.Primitives
 		/// <returns></returns>
 		public static bool isEmail(this string value)
 		{
-			try
-			{
-				MailboxAddress m = new MailboxAddress(value);
-				return true;
-			}
-			catch (FormatException)
-			{
-				return false;
-			}
+			MailboxAddress result;
+
+			return MailboxAddress.TryParse(value, out result);
 		}
 
 		/// <summary>
