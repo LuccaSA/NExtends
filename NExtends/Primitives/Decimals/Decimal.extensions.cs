@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Decimals
 {
 	public static class DecimalExtensions
 	{

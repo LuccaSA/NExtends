@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\iLucca.net\packages\NExtends.1.0.8\lib\net451\</OutputPath>
+    <OutputPath>..\..\Lucca\packages\NExtends.1.0.12\lib\net451\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -69,7 +69,7 @@
     <Compile Include="Helpers\HtmlUtility.cs" />
     <Compile Include="Http\HttpRequestMessage.exstensions.cs" />
     <Compile Include="Primitives\DateTime.extensions.cs" />
-    <Compile Include="Primitives\Decimal.extensions.cs" />
+    <Compile Include="Primitives\Decimals\Decimal.extensions.cs" />
     <Compile Include="Primitives\Double.extensions.cs" />
     <Compile Include="Primitives\Enum.extensions.cs" />
     <Compile Include="Primitives\Exception.extensions.cs" />
