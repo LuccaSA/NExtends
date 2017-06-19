@@ -1,6 +1,6 @@
 # Change log
 
-## 1.0.11
+## 1.1.0
 
 ### Breaking changes
  - DecimalExtensions' namespace changing from NExtends.Primitives to NExtends.Primitives.Decimals 
