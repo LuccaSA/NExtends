@@ -77,20 +77,6 @@ namespace NExtends.Primitives
 			}
 		}
 
-		/// <summary>
-		/// Indicates whether the specified IEnumerable is null or empty.
-		/// </summary>
-		/// <param name="iEnumerable"></param>
-		/// <returns></returns>
-		public static bool isNullOrEmpty(this IEnumerable<object> IEnumerable)
-		{
-			if (IEnumerable != null)
-			{
-				return !IEnumerable.Any();
-			}
-			return true;
-		}
-
 		//Pour pouvoir écrire dans une NameValueCollection, il faut la convertir en Dictionnary
 		public static Dictionary<string, string> ToDictionary(this NameValueCollection collection)
 		{
@@ -257,6 +243,11 @@ namespace NExtends.Primitives
 		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> collection)
 		{
 			return new HashSet<T>(collection);
+		}
+
+		public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
+		{
+			return source == null || !source.Any();
 		}
 	}
 }

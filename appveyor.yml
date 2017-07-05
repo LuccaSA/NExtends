@@ -1,0 +1,25 @@
+version: 1.1.{build}
+branches:
+  only:
+    - master
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
+pull_requests:
+  do_not_increment_build_number: true
+configuration: Release
+platform: Any CPU
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
+before_build:
+- cmd: >-
+    nuget restore NExtends.sln
+
+build:
+  project: NExtends.sln
+  verbosity: minimal
