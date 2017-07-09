@@ -1,11 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+using NExtends.Primitives;
+using NExtends.Primitives.Types;
+using NExtends.Tests.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NExtends.Tests.Models;
-using NExtends.Primitives;
 
 namespace NExtends.Tests
 {
