@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\ilucca.net\packages\NExtends.1.0.14\lib\net451\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -79,7 +79,7 @@
     <Compile Include="Primitives\Int32.extensions.cs" />
     <Compile Include="Primitives\Object.extensions.cs" />
     <Compile Include="Primitives\String.extensions.cs" />
-    <Compile Include="Primitives\TimeSpan.extensions.cs" />
+    <Compile Include="Primitives\TimeSpans\TimeSpan.extensions.cs" />
     <Compile Include="Primitives\Types\Type.extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.TimeSpans
 {
 	public static class TimeSpanExtensions
 	{
@@ -43,5 +43,56 @@ namespace NExtends.Primitives
 		public static bool IsPositiveOrZero(this TimeSpan t1) { return t1.Ticks >= 0; }
 		public static bool IsNegativeOrZero(this TimeSpan t1) { return t1.Ticks <= 0; }
 		public static bool IsNegative(this TimeSpan t1) { return t1.Ticks < 0; }
+
+		public static string ToHours(this TimeSpan span, bool showSign = false)
+		{
+			if (span == TimeSpan.Zero)
+			{
+				return "0h";
+			}
+			var absSpan = new TimeSpan(Math.Abs(span.Ticks));
+
+			var sb = new StringBuilder();
+			if (showSign && span > TimeSpan.Zero)
+			{
+				sb.Append("+");
+			}
+			if (showSign && span < TimeSpan.Zero)
+			{
+				sb.Append("-");
+			}
+			if (absSpan.Hours > 0)
+			{
+				sb.AppendFormat("{0}h", Math.Floor(absSpan.TotalHours));
+			}
+			if (absSpan.Minutes > 0 && absSpan.Hours == 0)
+			{
+				sb.AppendFormat("{0}min", absSpan.Minutes);
+			}
+			if (absSpan.Minutes > 0 && absSpan.Hours > 0)
+			{
+				sb.AppendFormat("{0}", absSpan.Minutes);
+			}
+			return sb.ToString();
+		}
+		public static string ToDays(this TimeSpan span, bool showSign = false)
+		{
+			if (span == TimeSpan.Zero)
+			{
+				return "0";
+			}
+			var absSpan = new TimeSpan(Math.Abs(span.Ticks));
+			var sb = new StringBuilder();
+			if (showSign && span > TimeSpan.Zero)
+			{
+				sb.Append("+");
+			}
+			if (showSign && span < TimeSpan.Zero)
+			{
+				sb.Append("-");
+			}
+			sb.AppendFormat("{0}", absSpan.TotalDays);
+			return sb.ToString();
+		}
 	}
 }
