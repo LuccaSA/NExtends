@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NExtends.Attributes;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -6,12 +7,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using Newtonsoft.Json;
-using NExtends.Attributes;
 using System.Linq.Expressions;
+using System.Reflection;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Types
 {
 	public static class TypeExtensions
 	{

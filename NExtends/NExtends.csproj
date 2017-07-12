@@ -80,7 +80,7 @@
     <Compile Include="Primitives\Object.extensions.cs" />
     <Compile Include="Primitives\String.extensions.cs" />
     <Compile Include="Primitives\TimeSpan.extensions.cs" />
-    <Compile Include="Primitives\Type.extensions.cs" />
+    <Compile Include="Primitives\Types\Type.extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
