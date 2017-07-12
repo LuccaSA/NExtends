@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 
-namespace NExtends.Primitives
+namespace NExtends.Helpers
 {
 	//Pour pouvoir comparer rapidement 2 objets de la même Classe
 	public class GenericEqualityComparer<T> : IEqualityComparer<T>

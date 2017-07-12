@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NExtends.Attributes;
+using NExtends.Helpers;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
