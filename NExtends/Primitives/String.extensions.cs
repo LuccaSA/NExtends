@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NExtends.Primitives.Ints;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Design.PluralizationServices;

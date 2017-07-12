@@ -76,7 +76,7 @@
     <Compile Include="Primitives\Expression.extensions.cs" />
     <Compile Include="Helpers\GenericEqualityComparer.cs" />
     <Compile Include="Primitives\Generics.extensions.cs" />
-    <Compile Include="Primitives\Int32.extensions.cs" />
+    <Compile Include="Primitives\Ints\Int32.extensions.cs" />
     <Compile Include="Primitives\String.extensions.cs" />
     <Compile Include="Primitives\TimeSpans\TimeSpan.extensions.cs" />
     <Compile Include="Primitives\Types\Type.extensions.cs" />

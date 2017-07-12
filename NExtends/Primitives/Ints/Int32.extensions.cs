@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Ints
 {
 	public static class Int32Extensions
 	{
