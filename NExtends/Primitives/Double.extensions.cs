@@ -35,6 +35,7 @@ namespace NExtends.Primitives
 		/// <para>Round number to given precision using mode MidpointRounding.AwayFromZero</para>
 		/// <para>ie: the normal maths rounding</para>
 		///	<para>For example: RealRound(0.165, 2) returns 0.17 and NOT 0.16</para>
+		///	<para>WARNING: still does not seem to be the "real" maths rounding when working with doubles: rounding 1.035 using either method returns 1.03 instead of 1.04</para>
 		/// </summary>
 		/// <param name="d"></param>
 		/// <param name="precision"></param>
