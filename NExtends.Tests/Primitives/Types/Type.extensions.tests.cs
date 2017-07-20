@@ -1,15 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NExtends.Primitives.Types;
+﻿using NExtends.Primitives.Types;
+using Xunit;
 
 namespace NExtends.Tests.Primitives.Types
 {
-	[TestClass]
 	public class TypeExtensionsTest
 	{
-		[TestMethod]
+		[Fact]
 		public void IsSubclassOfInterfaceShouldHandleNonGenericInterfaces()
 		{
-			Assert.IsTrue(typeof(System.Collections.ArrayList).IsSubclassOfInterface(typeof(System.Collections.IEnumerable)));
+			Assert.True(typeof(System.Collections.ArrayList).IsSubclassOfInterface(typeof(System.Collections.IEnumerable)));
 		}
 	}
 }
