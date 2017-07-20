@@ -70,7 +70,7 @@
     <Compile Include="Http\HttpRequestMessage.exstensions.cs" />
     <Compile Include="Primitives\DateTime.extensions.cs" />
     <Compile Include="Primitives\Decimals\Decimal.extensions.cs" />
-    <Compile Include="Primitives\Double.extensions.cs" />
+    <Compile Include="Primitives\Doubles\Double.extensions.cs" />
     <Compile Include="Primitives\Enum.extensions.cs" />
     <Compile Include="Primitives\Exception.extensions.cs" />
     <Compile Include="Primitives\Expression.extensions.cs" />

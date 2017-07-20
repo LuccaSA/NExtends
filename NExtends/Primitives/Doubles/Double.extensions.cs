@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Globalization;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Doubles
 {
 	public static class DoubleExtensions
 	{
