@@ -1,5 +1,4 @@
-﻿using MimeKit;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -84,29 +83,17 @@ namespace NExtends.Primitives
 		/// <summary>
 		/// On passe par un MailAddress, plus simple
 		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static bool isEmail(this string value)
+		public static bool isEmail(this string email)
 		{
-			MailboxAddress result;
-
-			return MailboxAddress.TryParse(value, out result);
-		}
-
-		/// <summary>
-		/// Pour récupérer du même coup le MailAddress
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static MailboxAddress ToMailAddress(this string value)
-		{
+			//https://stackoverflow.com/a/1374644/533686
 			try
 			{
-				return new MailboxAddress(value);
+				var addr = new System.Net.Mail.MailAddress(email);
+				return addr.Address == email;
 			}
-			catch (FormatException)
+			catch
 			{
-				return null;
+				return false;
 			}
 		}
 
