@@ -1,16 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NExtends.Primitives;
-using NExtends.Primitives.Types;
-using NExtends.Tests.Models;
 using System.Collections.Generic;
 using System.Linq;
+using NExtends.Tests.Models;
+using NExtends.Primitives;
+using NExtends.Primitives.Types;
+using Xunit;
 
 namespace NExtends.Tests
 {
-	[TestClass]
 	public class GenericsTests
 	{
-		[TestMethod]
+		[Fact]
 		public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()
 		{
 			var t = new GenericTestsClassT() { Id = 1, Name = "T", CustomT = "CustomT", UnexpectedCommonName = "Common" };
@@ -19,25 +18,25 @@ namespace NExtends.Tests
 
 			var result = collection.Cast<GenericTestsClassT, GenericTestsClassU, GenericTestsInterfaceI>().SingleOrDefault();
 
-			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.Id);
-			Assert.AreEqual("T", result.Name);
-			Assert.IsNull(result.CustomU);
-			Assert.IsNull(result.UnexpectedCommonName);
+			Assert.NotNull(result);
+			Assert.Equal(1, result.Id);
+			Assert.Equal("T", result.Name);
+			Assert.Null(result.CustomU);
+			Assert.Null(result.UnexpectedCommonName);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void CastingObjectOfClassToAnotherThroughtInterfaceShouldWork()
 		{
 			var t = new GenericTestsClassT() { Id = 1, Name = "T", CustomT = "CustomT", UnexpectedCommonName = "Common" };
 
 			var result = t.Cast<GenericTestsClassT, GenericTestsClassU, GenericTestsInterfaceI>();
 
-			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.Id);
-			Assert.AreEqual("T", result.Name);
-			Assert.IsNull(result.CustomU);
-			Assert.IsNull(result.UnexpectedCommonName);
+			Assert.NotNull(result);
+			Assert.Equal(1, result.Id);
+			Assert.Equal("T", result.Name);
+			Assert.Null(result.CustomU);
+			Assert.Null(result.UnexpectedCommonName);
 		}
 	}
 }

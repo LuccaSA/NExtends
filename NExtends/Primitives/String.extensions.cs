@@ -1,15 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net.Mail;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Xml;
 
 namespace NExtends.Primitives
 {
@@ -87,41 +83,23 @@ namespace NExtends.Primitives
 		/// <summary>
 		/// On passe par un MailAddress, plus simple
 		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static bool isEmail(this string value)
+		public static bool isEmail(this string email)
 		{
+			//https://stackoverflow.com/a/1374644/533686
 			try
 			{
-				MailAddress m = new MailAddress(value);
-				return true;
+				var addr = new System.Net.Mail.MailAddress(email);
+				return addr.Address == email;
 			}
-			catch (FormatException)
+			catch
 			{
 				return false;
 			}
 		}
 
-		/// <summary>
-		/// Pour récupérer du même coup le MailAddress
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static MailAddress ToMailAddress(this string value)
-		{
-			try
-			{
-				return new MailAddress(value);
-			}
-			catch (FormatException)
-			{
-				return null;
-			}
-		}
-
 		public static bool ContainsIgnoreCase(this string source, string value)
 		{
-			return source.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) != -1;
+			return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) != -1;
 		}
 
 		public static String SQLProtect(this String value)
@@ -273,10 +251,6 @@ namespace NExtends.Primitives
 			return KVPValues.SplitPipeValues<string, string>();
 		}
 
-		public static String ToXMLAttribute(this String s)
-		{
-			return HttpUtility.HtmlEncode(s);
-		}
 		public static String ToXML(this String s)
 		{
 			return "<![CDATA[" + s + "]]>";
@@ -421,7 +395,7 @@ namespace NExtends.Primitives
 		/// <returns></returns>
 		public static object ChangeType(this string value, Type propertyType, IFormatProvider culture)
 		{
-			if (propertyType.IsEnum)
+			if (propertyType.GetTypeInfo().IsEnum)
 			{
 				return Enum.Parse(propertyType, value, true);
 			}
@@ -459,38 +433,6 @@ namespace NExtends.Primitives
 			{
 				return "";
 			}
-		}
-
-		//Fonction prise sur le NET pour indenter du xml
-		public static string IndentXMLString(this string xml)
-		{
-			string outXml = string.Empty;
-			MemoryStream ms = new MemoryStream();
-			// Create a XMLTextWriter that will send its output to a memory stream (file)
-			XmlTextWriter xtw = new XmlTextWriter(ms, Encoding.Unicode);
-			XmlDocument doc = new XmlDocument();
-
-			// Load the unformatted XML text string into an instance 
-			// of the XML Document Object Model (DOM)
-			doc.LoadXml(xml);
-
-			// Set the formatting property of the XML Text Writer to indented
-			// the text writer is where the indenting will be performed
-			xtw.Formatting = System.Xml.Formatting.Indented;
-
-			// write dom xml to the xmltextwriter
-			doc.WriteContentTo(xtw);
-			// Flush the contents of the text writer
-			// to the memory stream, which is simply a memory file
-			xtw.Flush();
-
-			// set to start of the memory stream (file)
-			ms.Seek(0, SeekOrigin.Begin);
-			// create a reader to read the contents of 
-			// the memory stream (file)
-			StreamReader sr = new StreamReader(ms);
-			// return the formatted string to caller
-			return sr.ReadToEnd();
 		}
 
 		/// <summary>
@@ -531,13 +473,6 @@ namespace NExtends.Primitives
 			}
 
 			return originalString;
-		}
-
-		//mise en cache important pour les perfs
-		static readonly PluralizationService PluralizationService = PluralizationService.CreateService(CultureInfo.GetCultureInfo("en-US"));
-		public static string Pluralize(this string name)
-		{
-			return PluralizationService.Pluralize(name);
 		}
 
 		public static void AppendLineFormat(this StringBuilder sb, string format, params object[] args)

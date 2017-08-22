@@ -1,4 +1,19 @@
+image: Visual Studio 2017 Preview
+
 version: 1.1.{build}
+
+environment:
+  global:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  SONAR_TOKEN:
+    secure: LScTgkadM+dsPa7ZdoGB9VnW26CSOWHVk0MINZuIh60cisvTd20n9GOAZPp/Nh4e
+  COVERALLS_TOKEN:
+    secure: 0pG+GZJxuLVsEJPgOqeiMmRAlwWvm4W3QaagoX6FJ/oSqCgPO3V9/w8r8HjhN/0B
+  GITHUB_ACCESS_TOKEN:
+    secure: 4mw9uwMEkmIPucv0Aa6cziU8QdwKEzRCqOf2HWFRVdheolRbZJN4zWnnZjW+W0dL
+
+
 branches:
   only:
     - master
@@ -17,9 +32,29 @@ assembly_info:
   assembly_informational_version: '{version}'
 
 before_build:
+- dotnet restore
+- choco install "msbuild-sonarqube-runner" -y
+- nuget install OpenCover -Version 4.6.519
+- nuget install coveralls.net -Version 0.7.0
 - cmd: >-
-    nuget restore NExtends.sln
+    IF "%APPVEYOR_PULL_REQUEST_NUMBER%"=="" (
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"NExtends" /d:"sonar.analysis.mode=publish" /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SONAR_TOKEN%"
+    ) ELSE (
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe begin /k:"NExtends" /d:"sonar.analysis.mode=preview" /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SONAR_TOKEN%" /d:"sonar.github.pullRequest=%APPVEYOR_PULL_REQUEST_NUMBER%" /d:"sonar.github.repository=LuccaSA/NExtends" /d:"sonar.github.oauth=%GITHUB_ACCESS_TOKEN%"
+    )
+
+test: off
 
 build:
   project: NExtends.sln
   verbosity: minimal
+
+test_script:
+- cmd: >-
+    cd NExtends.Tests && dotnet xunit
+#    ..\OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"xunit -noshadow -appveyor" -oldstyle -filter:"+[NExtends*]* -[NExtends.Tests]*" -output:opencoverCoverage.xml -coverbytest:*.Test.dll 
+#- cmd: >-
+#    .\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i opencoverCoverage.xml --repoToken %COVERALLS_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch "%APPVEYOR_REPO_BRANCH%" --commitAuthor "%APPVEYOR_REPO_COMMIT_AUTHOR%" --commitEmail "%APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL%" --commitMessage "%APPVEYOR_REPO_COMMIT_MESSAGE%" --jobId %APPVEYOR_JOB_ID% 
+after_build:
+- cmd: >-
+    C:\ProgramData\chocolatey\lib\msbuild-sonarqube-runner\tools\MSBuild.SonarQube.Runner.exe end /d:"sonar.login=%SONAR_TOKEN%"

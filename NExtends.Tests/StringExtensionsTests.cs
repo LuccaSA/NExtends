@@ -1,17 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NExtends.Primitives;
+using Xunit;
 
 namespace NExtends.Tests
 {
-	[TestClass]
 	public class StringExtensionsTests
 	{
-		[TestMethod]
+		[Fact]
 		public void ShouldRemoveDiacritics()
 		{
 			var text = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖòóôõöÈÉÊËèéêëÌÍÎÏìíîïÙÚÛÜùúûüÿÑñÇç";
@@ -20,10 +19,10 @@ namespace NExtends.Tests
 
 			var expected = "AAAAAAaaaaaaOOOOOoooooEEEEeeeeIIIIiiiiUUUUuuuuyNnCc";
 
-			Assert.AreEqual(expected, result);
+			Assert.Equal(expected, result);
 		}
 
-		[TestMethod]
+		[Fact]
 		public void ShouldRemoveSpecialCharacters()
 		{
 			var text = @"Jean d'Anois-Dumesnil _[]|./""@{}()";
@@ -32,7 +31,23 @@ namespace NExtends.Tests
 
 			var expected = "JeandAnoisDumesnil";
 
-			Assert.AreEqual(expected, result);
+			Assert.Equal(expected, result);
+		}
+
+		[Theory]
+		[InlineData("toto")]
+		public void ShouldReturnFalseWhenTextIsNotEmail(string value)
+		{
+			Assert.False(value.isEmail());
+		}
+
+		[Theory]
+		[InlineData("toto@lucca.fr")]
+		[InlineData("toto@l")]
+		[InlineData("toto@lucca")]
+		public void ShouldReturnTrueWhenTextIsEmail(string value)
+		{
+			Assert.True(value.isEmail());
 		}
 	}
 }
