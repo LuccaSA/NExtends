@@ -1,5 +1,30 @@
 # Change log
 
+## 2.0 (.NET Standard 2.0)
+
+### Changes
+
+- Type.GetMember() needs System.Reflection in usings
+- GetCustomAttributes() returns IEnumerable, so .Length nor .[0] does not work anymore => .Count(), .ElementAt(0)
+- Thread.CurrentThread.CurrentCulture => CultureInfo.CurrentCulture
+- Type.xx => Type.GetTypeInfo().xx
+- DateTime.ToShortDateString() => use DateTime.ToString("d")
+- DateTime.ToShortTimeString() => use DateTime.ToString("t")
+
+### Breaking changes
+
+- AgilityPack, AntiXss, ToXMLAttribute => directly use Nuget Package HtmlSanitizer https://github.com/mganss/HtmlSanitizer
+- System.Net.Mail => is not supported in .NET Core yet, use MailKit instead https://github.com/jstedfast/MailKit#using-mailkit
+- StringComparison.InvariantCultureIgnoreCase => does not exists anymore, closest value chosen : StringComparison.OrdinalIgnoreCase
+- IndentXMLString => not supported anymore
+- PluralizationService => dead in EF7
+- GetClientIpAddress => not supported anymore
+- NameValueCollection => seems to have disappear from System.Collections.Specialized
+- ToDictionary(this NameValueCollection collection) => not supported anymore
+- CultureInfo(int lcid) => seems to be deprecated
+- .toShortUserFormat() => not supported anymore
+- GetOriginalName uses CodeDom => not supported anymore
+
 ## 1.1.1
 
 ### Resolved issues
