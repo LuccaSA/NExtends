@@ -129,26 +129,15 @@ namespace NExtends.Primitives.Types
 			return false;
 		}
 
-		/// <summary>
-		/// Si c'est une entité de l'EDMX, le type va être Utilisateur_DFDKKDFHVBJTHERU : Utilisateur => Utilisateur
-		/// Et parfois sera tronqué !! PublicHolidaysCalenda_SDOIDFOIDF : PublicHolidaysCalendar => PublicHolidaysCalendar !!
-		/// Ou alors des types hérité, comme FiggoApplication : Application => Application
-		/// Si c'est une APICollection, le type va être APICollection`1 => APICollection
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public static string GetRealTypeName(this Type type)
-		{
-			var info = type.GetTypeInfo();
-			if (info.IsDefined(typeof(JsonObjectAttribute), false))
-			{
-				return (info.BaseType ?? type).Name; //Au cas où BaseType est null, on prend le type lui même (cas du type Object par ex)
-			}
-			else
-			{
-				return type.Name.Split('`')[0];
-			}
-		}
+        /// <summary>
+        /// Returns IEnumerable when Type is IEnumerable of User
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static string GetRealTypeName(this Type type)
+        {
+            return type.Name.Split('`')[0];
+        }
 
 		/// <summary>
 		/// [ <c>public static Type GetNullableType(Type TypeToConvert)</c> ]
