@@ -9,7 +9,6 @@ namespace NExtends.Expressions
 	public class KeepTypeInPlaceVisitor<TSource, TKeep> : ExpressionVisitor
 	{
 		private readonly Type _lambdaToKeep;
-		private readonly ParameterExpression _newParameter;
 		private readonly bool _withReplacement;
 		private readonly ExtractExpressionFromLambdaVisitor<TKeep> _lambdaExpressionExtractor;
 		private readonly ParameterReplacementVisitor _parameterReplacementVisitor;
@@ -17,10 +16,9 @@ namespace NExtends.Expressions
 		public KeepTypeInPlaceVisitor(ParameterExpression originalParameter, ParameterExpression newParameter, Dictionary<string, string> propertyRenaming, bool withReplacement)
 		{
 			_lambdaToKeep = typeof(Func<TKeep, bool>);
-			_newParameter = newParameter;
 			_withReplacement = withReplacement;
-			_lambdaExpressionExtractor = new ExtractExpressionFromLambdaVisitor<TKeep>(_newParameter);
-			_parameterReplacementVisitor = new ParameterReplacementVisitor(originalParameter, _newParameter, propertyRenaming);
+			_lambdaExpressionExtractor = new ExtractExpressionFromLambdaVisitor<TKeep>(newParameter);
+			_parameterReplacementVisitor = new ParameterReplacementVisitor(originalParameter, newParameter, propertyRenaming);
 		}
 
 		public Expression VisitRoot(Expression node)

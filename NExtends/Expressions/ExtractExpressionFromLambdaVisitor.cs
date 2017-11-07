@@ -6,20 +6,22 @@ namespace NExtends.Expressions
 {
 	public class ExtractExpressionFromLambdaVisitor<TExtract> : ExpressionVisitor
     {
-        private Expression _ExtractedBody = null;
-        private ParameterExpression _NewParameter = null;
+        private readonly ParameterExpression _newParameter;
+        private Expression _extractedBody = null;
+
         public ExtractExpressionFromLambdaVisitor(ParameterExpression newParameter)
         {
-            _NewParameter = newParameter;
+            _newParameter = newParameter;
         }
+
         public Expression VisitRoot(Expression node)
         {
-            _ExtractedBody = null;
+            _extractedBody = null;
             return Visit(node);
         }
         public override Expression Visit(Expression node)
         {
-            if (_ExtractedBody != null) { return _ExtractedBody; }
+            if (_extractedBody != null) { return _extractedBody; }
             return base.Visit(node);
         }
 
@@ -29,9 +31,9 @@ namespace NExtends.Expressions
             if (lambda == null) { return base.VisitMethodCall(node); }
             if (lambda.Parameters.Any(p => p.Type == typeof(TExtract)))
             {
-                var replacementVisitor = new ExpressionHelper.ParameterReplacementVisitor(lambda.Parameters.First(p => p.Type == typeof(TExtract)), _NewParameter, new Dictionary<string, string>());
-                _ExtractedBody = replacementVisitor.Visit(lambda.Body);
-                return _ExtractedBody;
+                var replacementVisitor = new ExpressionHelper.ParameterReplacementVisitor(lambda.Parameters.First(p => p.Type == typeof(TExtract)), _newParameter, new Dictionary<string, string>());
+                _extractedBody = replacementVisitor.Visit(lambda.Body);
+                return _extractedBody;
             }
             return base.VisitMethodCall(node);
         }
