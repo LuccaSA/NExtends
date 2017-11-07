@@ -157,12 +157,6 @@ namespace NExtends.Primitives
 			return d.ToString("MMM", new CultureInfo("en-US")) + " " + d.Year;
 		}
 
-		public static String[] dayText = { "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche" };
-		public static String DayText(int day)
-		{
-			return dayText[day];
-		}
-
 		/// <summary>
 		/// Permet d'affecter un time à 23:59:59.999 à une date qui n'a pas de time
 		/// </summary>
