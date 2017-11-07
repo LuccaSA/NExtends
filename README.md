@@ -2,7 +2,7 @@
 Extension C#, netstandard 2.0
 
 [![Build status](https://ci.appveyor.com/api/projects/status/4lokrcxgt7s0hyub?svg=true)](https://ci.appveyor.com/project/LuccaIntegration/nextends)
-[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=Lucca.Upgrading)](https://sonarcloud.io/dashboard/index/Lucca.Upgrading)
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=NExtends)](https://sonarcloud.io/dashboard/index/NExtends)
 [![Technical Debt Ratio](https://sonarcloud.io/api/badges/measure?key=NExtends&metric=sqale_debt_ratio)](https://sonarcloud.io/dashboard/index/NExtends)
 [![codecov](https://codecov.io/gh/LuccaSA/NExtends/branch/master/graph/badge.svg)](https://codecov.io/gh/LuccaSA/NExtends)
 
