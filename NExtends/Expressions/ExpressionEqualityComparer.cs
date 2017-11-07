@@ -15,16 +15,12 @@ namespace NExtends.Expressions
 	/// </summary>
 	public static class ExpressionEqualityComparer
 	{
-		public static bool Eq(
-			LambdaExpression x,
-			LambdaExpression y)
+		public static bool Eq(LambdaExpression x, LambdaExpression y)
 		{
 			return ExpressionsEqual(x, y, null, null);
 		}
 
-		public static bool Eq<TSource1, TSource2, TValue>(
-			Expression<Func<TSource1, TSource2, TValue>> x,
-			Expression<Func<TSource1, TSource2, TValue>> y)
+		public static bool Eq<TSource1, TSource2, TValue>(Expression<Func<TSource1, TSource2, TValue>> x, Expression<Func<TSource1, TSource2, TValue>> y)
 		{
 			return ExpressionsEqual(x, y, null, null);
 		}
@@ -53,63 +49,54 @@ namespace NExtends.Expressions
 				return false;
 			}
 
-			if (x is LambdaExpression)
+			if (x is LambdaExpression lx)
 			{
-				var lx = (LambdaExpression)x;
 				var ly = (LambdaExpression)y;
 				var paramsX = lx.Parameters;
 				var paramsY = ly.Parameters;
 				return CollectionsEqual(paramsX, paramsY, lx, ly) && ExpressionsEqual(lx.Body, ly.Body, lx, ly);
 			}
-			if (x is MemberExpression)
+			if (x is MemberExpression mex)
 			{
-				var mex = (MemberExpression)x;
 				var mey = (MemberExpression)y;
 				return Equals(mex.Member, mey.Member) && ExpressionsEqual(mex.Expression, mey.Expression, rootX, rootY);
 			}
-			if (x is BinaryExpression)
+			if (x is BinaryExpression bx)
 			{
-				var bx = (BinaryExpression)x;
 				var by = (BinaryExpression)y;
 				return bx.Method == @by.Method && ExpressionsEqual(bx.Left, @by.Left, rootX, rootY) &&
 					   ExpressionsEqual(bx.Right, @by.Right, rootX, rootY);
 			}
-			if (x is UnaryExpression)
+			if (x is UnaryExpression ux)
 			{
-				var ux = (UnaryExpression)x;
 				var uy = (UnaryExpression)y;
 				return ux.Method == uy.Method && ExpressionsEqual(ux.Operand, uy.Operand, rootX, rootY);
 			}
-			if (x is ParameterExpression)
+			if (x is ParameterExpression px)
 			{
-				var px = (ParameterExpression)x;
 				var py = (ParameterExpression)y;
 				return rootX.Parameters.IndexOf(px) == rootY.Parameters.IndexOf(py);
 			}
-			if (x is MethodCallExpression)
+			if (x is MethodCallExpression mcx)
 			{
-				var cx = (MethodCallExpression)x;
-				var cy = (MethodCallExpression)y;
-				return cx.Method == cy.Method
-					   && ExpressionsEqual(cx.Object, cy.Object, rootX, rootY)
-					   && CollectionsEqual(cx.Arguments, cy.Arguments, rootX, rootY);
+				var mcy = (MethodCallExpression)y;
+				return mcx.Method == mcy.Method
+					   && ExpressionsEqual(mcx.Object, mcy.Object, rootX, rootY)
+					   && CollectionsEqual(mcx.Arguments, mcy.Arguments, rootX, rootY);
 			}
-			if (x is MemberInitExpression)
+			if (x is MemberInitExpression mix)
 			{
-				var mix = (MemberInitExpression)x;
 				var miy = (MemberInitExpression)y;
 				return ExpressionsEqual(mix.NewExpression, miy.NewExpression, rootX, rootY)
 					   && MemberInitsEqual(mix.Bindings, miy.Bindings, rootX, rootY);
 			}
-			if (x is NewArrayExpression)
+			if (x is NewArrayExpression nax)
 			{
-				var nx = (NewArrayExpression)x;
-				var ny = (NewArrayExpression)y;
-				return CollectionsEqual(nx.Expressions, ny.Expressions, rootX, rootY);
+				var nay = (NewArrayExpression)y;
+				return CollectionsEqual(nax.Expressions, nay.Expressions, rootX, rootY);
 			}
-			if (x is NewExpression)
+			if (x is NewExpression nx)
 			{
-				var nx = (NewExpression)x;
 				var ny = (NewExpression)y;
 				return
 					Equals(nx.Constructor, ny.Constructor)
@@ -117,9 +104,8 @@ namespace NExtends.Expressions
 					&& (nx.Members == null && ny.Members == null
 						|| nx.Members != null && ny.Members != null && CollectionsEqual(nx.Members, ny.Members));
 			}
-			if (x is ConditionalExpression)
+			if (x is ConditionalExpression cx)
 			{
-				var cx = (ConditionalExpression)x;
 				var cy = (ConditionalExpression)y;
 				return
 					ExpressionsEqual(cx.Test, cy.Test, rootX, rootY)

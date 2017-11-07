@@ -65,7 +65,7 @@ namespace NExtends.Expressions
 		{
 			var member = reducer.Body as MemberExpression;
 			if (member == null)
-				throw new Exception("Ce converter ne fonctionne qu'avec des membres directs. ex : tSource => tSource.Prop");
+				throw new ArgumentException("Ce converter ne fonctionne qu'avec des membres directs. ex : tSource => tSource.Prop");
 
 			var param = Expression.Parameter(typeof(TProp), reducer.Parameters[0].Name);
 			var expressionReducer = new ExpressionReducer<TSource, TProp>(member, param);

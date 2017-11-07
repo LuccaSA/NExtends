@@ -125,25 +125,28 @@ namespace NExtends.Expressions
 			return visitor.VisitRoot(original);
 		}
 
-		private class HasTypeVisitor<TKeep> : ExpressionVisitor
+		private class HasTypeVisitor<TExpression> : ExpressionVisitor
 		{
 			private Type _toKeep;
 			private bool _HasType = false;
+
 			public HasTypeVisitor()
 			{
-				_toKeep = typeof(TKeep);
+				_toKeep = typeof(TExpression);
 			}
+
 			public bool VisitRoot(Expression node)
 			{
 				var visited = Visit(node);
 				return _HasType;
 			}
+
 			public override Expression Visit(Expression node)
 			{
 				if (_HasType) { return node; }
 				if (node != null && node.Type == _toKeep)
 				{
-					_HasType = _HasType | true;
+					_HasType = true;
 					return node;
 				}
 				else

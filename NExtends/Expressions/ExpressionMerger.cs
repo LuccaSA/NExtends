@@ -12,11 +12,10 @@ namespace NExtends.Expressions
 			return new ExpressionMerger().MergeAll<TIn, TA, TOut>(entryPoint, expression1);
 		}
 
-		//possibilité de merger n expressions
-		//public static Expression<Func<TIn, TOut>> Merge<TIn, TA, TB, TOut>(Expression<Func<TIn, TA>> entryPoint, Expression<Func<TA, TB>> expression1, Expression<Func<TB, TOut>> expression2)
-		//{
-		//	return new ExpressionMerger().MergeAll<TIn, TA, TOut>(entryPoint, expression1, expression2);
-		//}
+		public static Expression<Func<TIn, TOut>> Merge<TIn, TA, TB, TOut>(Expression<Func<TIn, TA>> entryPoint, Expression<Func<TA, TB>> expression1, Expression<Func<TB, TOut>> expression2)
+		{
+			return new ExpressionMerger().MergeAll<TIn, TA, TOut>(entryPoint, expression1, expression2);
+		}
 
 		protected Expression<Func<TIn, TOut>> MergeAll<TIn, T, TOut>(Expression<Func<TIn, T>> entryPoint, params LambdaExpression[] expressions)
 		{

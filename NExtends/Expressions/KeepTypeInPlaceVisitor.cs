@@ -7,139 +7,129 @@ using static NExtends.Expressions.ExpressionHelper;
 namespace NExtends.Expressions
 {
 	public class KeepTypeInPlaceVisitor<TSource, TKeep> : ExpressionVisitor
-    {
-        private Type _LambdaToKeep;
-        private ParameterExpression _NewParameter = null;
-        private bool _WithReplacement = false;
-        private ExtractExpressionFromLambdaVisitor<TKeep> _LambdaExpressionExtractor = null;
-        private ParameterReplacementVisitor _ParameterReplacementVisitor = null;
+	{
+		private readonly Type _lambdaToKeep;
+		private readonly ParameterExpression _newParameter;
+		private readonly bool _withReplacement;
+		private readonly ExtractExpressionFromLambdaVisitor<TKeep> _lambdaExpressionExtractor;
+		private readonly ParameterReplacementVisitor _parameterReplacementVisitor;
 
-        public KeepTypeInPlaceVisitor(ParameterExpression originalParameter, ParameterExpression newParameter, Dictionary<string, string> propertyRenaming, bool withReplacement)
-        {
-            _LambdaToKeep = typeof(Func<TKeep, bool>);
-            _NewParameter = newParameter;
-            _WithReplacement = withReplacement;
-            _LambdaExpressionExtractor = new ExtractExpressionFromLambdaVisitor<TKeep>(_NewParameter);
-			_ParameterReplacementVisitor = new ParameterReplacementVisitor(originalParameter, _NewParameter, propertyRenaming);
-        }
-        public Expression VisitRoot(Expression node)
-        {
-            var visited = Visit(node);
-            return visited;
-        }
+		public KeepTypeInPlaceVisitor(ParameterExpression originalParameter, ParameterExpression newParameter, Dictionary<string, string> propertyRenaming, bool withReplacement)
+		{
+			_lambdaToKeep = typeof(Func<TKeep, bool>);
+			_newParameter = newParameter;
+			_withReplacement = withReplacement;
+			_lambdaExpressionExtractor = new ExtractExpressionFromLambdaVisitor<TKeep>(_newParameter);
+			_parameterReplacementVisitor = new ParameterReplacementVisitor(originalParameter, _newParameter, propertyRenaming);
+		}
 
-        protected override Expression VisitMethodCall(MethodCallExpression node)
-        {
-            if (IsCorrectCall(node))
-            {
-                return _LambdaExpressionExtractor.VisitRoot(node);
-            }
-            else
-            {
-                return base.VisitMethodCall(node);
-            }
-        }
-        protected override Expression VisitBinary(BinaryExpression node)
-        {
-            Expression left;
-            Expression right;
-            if (IsConditional(node.Left))
-            {
-                left = base.Visit(node.Left);
-            }
-            else if (IsCorrectCall(node.Left))
-            {
-                left = base.Visit(node.Left);
-            }
-            else if (HasExpressionWithCorrectType(node.Left))
-            {
-                if (_WithReplacement)
-                {
+		public Expression VisitRoot(Expression node)
+		{
+			return Visit(node);
+		}
 
-                    left = _ParameterReplacementVisitor.Visit(node.Left);
-                }
-                else
-                {
-                    left = node.Left;
-                }
+		protected override Expression VisitMethodCall(MethodCallExpression node)
+		{
+			if (IsCorrectCall(node))
+			{
+				return _lambdaExpressionExtractor.VisitRoot(node);
+			}
+			else
+			{
+				return base.VisitMethodCall(node);
+			}
+		}
 
-            }
-            else
-            {
-                left = GetReplacement(node.NodeType, node.Right);
-            }
+		protected override Expression VisitBinary(BinaryExpression node)
+		{
+			Expression left;
+			Expression right;
+			if (IsConditional(node.Left))
+			{
+				left = base.Visit(node.Left);
+			}
+			else if (IsCorrectCall(node.Left))
+			{
+				left = base.Visit(node.Left);
+			}
+			else if (HasExpressionWithCorrectType(node.Left))
+			{
+				if (_withReplacement)
+				{
 
-            if (IsConditional(node.Right))
-            {
-                right = base.Visit(node.Right);
+					left = _parameterReplacementVisitor.Visit(node.Left);
+				}
+				else
+				{
+					left = node.Left;
+				}
+			}
+			else
+			{
+				left = GetReplacement(node.NodeType, node.Right);
+			}
 
-            }
-            else if (IsCorrectCall(node.Right))
-            {
-                right = base.Visit(node.Right);
-            }
-            else if (IsConstant(node.Right))
-            {
-                right = base.Visit(node.Right);
-            }
-            else if (HasExpressionWithCorrectType(node.Right))
-            {
-                if (_WithReplacement)
-                {
-                    right = _ParameterReplacementVisitor.Visit(node.Right);
-                }
-                else
-                {
-                    right = node.Right;
-                }
-            }
-            else
-            {
-                right = GetReplacement(node.NodeType, left);
-            }
-            return Expression.MakeBinary(node.NodeType, left, right);
-        }
+			if (IsConditional(node.Right))
+			{
+				right = base.Visit(node.Right);
+			}
+			else if (IsCorrectCall(node.Right))
+			{
+				right = base.Visit(node.Right);
+			}
+			else if (IsConstant(node.Right))
+			{
+				right = base.Visit(node.Right);
+			}
+			else if (HasExpressionWithCorrectType(node.Right))
+			{
+				if (_withReplacement)
+				{
+					right = _parameterReplacementVisitor.Visit(node.Right);
+				}
+				else
+				{
+					right = node.Right;
+				}
+			}
+			else
+			{
+				right = GetReplacement(node.NodeType, left);
+			}
+			return Expression.MakeBinary(node.NodeType, left, right);
+		}
 
-        private bool IsConditional(Expression node)
-        {
-            return node.NodeType == ExpressionType.AndAlso || node.NodeType == ExpressionType.OrElse || node.NodeType == ExpressionType.Or || node.NodeType == ExpressionType.And || node.NodeType == ExpressionType.ExclusiveOr;
-        }
+		private bool IsConditional(Expression node)
+		{
+			return node.NodeType == ExpressionType.AndAlso || node.NodeType == ExpressionType.OrElse || node.NodeType == ExpressionType.Or || node.NodeType == ExpressionType.And || node.NodeType == ExpressionType.ExclusiveOr;
+		}
 
-        private bool IsCorrectCall(Expression node)
-        {
-            return node.NodeType == ExpressionType.Call && ((MethodCallExpression)node).Arguments.Any(arg => arg.Type == _LambdaToKeep);
-        }
-        private bool IsConstant(Expression node)
-        {
-            return node.NodeType == ExpressionType.Constant;
-        }
+		private bool IsCorrectCall(Expression node)
+		{
+			return node.NodeType == ExpressionType.Call && ((MethodCallExpression)node).Arguments.Any(arg => arg.Type == _lambdaToKeep);
+		}
 
-        private bool HasExpressionWithCorrectType(Expression node)
-        {
+		private bool IsConstant(Expression node)
+		{
+			return node.NodeType == ExpressionType.Constant;
+		}
+
+		private bool HasExpressionWithCorrectType(Expression node)
+		{
 			return HasSubexpressionsOfType<TSource>(node);
-        }
+		}
 
-        private static Expression GetReplacement(ExpressionType nodeType, Expression otherNode)
-        {
-            switch (nodeType)
-            {
-                case ExpressionType.OrElse:
-                case ExpressionType.Or:
-                case ExpressionType.ExclusiveOr:
-                    if (otherNode.NodeType == ExpressionType.Constant)
-                    {
-                        return Expression.Constant(true);
-                    }
-                    else
-                    {
-                        return Expression.Constant(false);
-                    }
-                case ExpressionType.AndAlso:
-                case ExpressionType.And:
-                default:
-                    return Expression.Constant(true);
-            }
-        }
-
-    }
+		private static Expression GetReplacement(ExpressionType nodeType, Expression otherNode)
+		{
+			switch (nodeType)
+			{
+				case ExpressionType.OrElse:
+				case ExpressionType.Or:
+				case ExpressionType.ExclusiveOr: return Expression.Constant(otherNode.NodeType == ExpressionType.Constant);
+				case ExpressionType.AndAlso:
+				case ExpressionType.And:
+				default: return Expression.Constant(true);
+			}
+		}
+	}
 }
