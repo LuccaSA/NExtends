@@ -309,15 +309,14 @@ namespace NExtends.Primitives.Types
 		public static string GetFriendlyName(this Type type)
 		{
 			var name = type.GetRealTypeName();
-			var info = type.GetTypeInfo();
-			var displayNameAttr = info.GetAttribute<CulturedDisplayNameAttribute>();
+			var displayNameAttr = type.GetAttribute<CulturedDisplayNameAttribute>();
 			if (displayNameAttr != null)
 			{
 				name = displayNameAttr.DisplayName;
 			}
 			else
 			{
-				var descriptionAttr = info.GetAttribute<DescriptionAttribute>();
+				var descriptionAttr = type.GetAttribute<DescriptionAttribute>();
 				if (descriptionAttr != null)
 				{
 					name = descriptionAttr.Description;
