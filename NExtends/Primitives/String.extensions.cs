@@ -469,6 +469,7 @@ namespace NExtends.Primitives
 
         /// <summary>
         /// String replacement with case insensivity support
+        /// https://stackoverflow.com/questions/6275980/string-replace-ignoring-case
         /// </summary>
         /// <param name="originalString"></param>
         /// <param name="oldValue">The string to be replaced.</param>
@@ -477,24 +478,21 @@ namespace NExtends.Primitives
         /// <returns></returns>
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
         {
-            // source
-            // http://stackoverflow.com/questions/5549426/is-there-a-case-insensitive-string-replace-in-net-without-using-regex
+            var regexOptions = RegexOptions.IgnoreCase;
 
-            var startIndex = 0;
-            while (true)
+            if (comparisonType == StringComparison.CurrentCulture
+                || comparisonType == StringComparison.InvariantCulture
+                || comparisonType == StringComparison.Ordinal)
             {
-                startIndex = originalString.IndexOf(oldValue, startIndex, comparisonType);
-                if (startIndex == -1)
-                {
-                    break;
-                }
-
-                originalString = originalString.Substring(0, startIndex) + newValue + originalString.Substring(startIndex + oldValue.Length);
-
-                startIndex += newValue.Length;
+                regexOptions = RegexOptions.CultureInvariant;
             }
 
-            return originalString;
+            return Regex.Replace(
+                originalString,
+                Regex.Escape(oldValue),
+                newValue.Replace("$", "$$"),
+                regexOptions
+            );
         }
 
         public static void AppendLineFormat(this StringBuilder sb, string format, params object[] args)
