@@ -16,3 +16,5 @@ packages/# NuGet Packages
 !**/packages/repositories.config
 /.vs
 /OpenCover.4.6.519
+/ComputeVersion.ps1
+/.versionCounter
