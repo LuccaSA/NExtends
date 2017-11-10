@@ -25,7 +25,7 @@ namespace NExtends.Tests.Primitives.Strings
             var extensionResult = NExtends.Primitives.StringExtensions.Replace(source, "whatever", "", StringComparison.InvariantCultureIgnoreCase);
             var extensionElapsed = sw.ElapsedMilliseconds;
 
-            Assert.True(extensionElapsed < 10 || extensionElapsed < nativeElapsed * 10);
+            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
 
             //10000 occurrences - Native
             sw.Restart();
@@ -37,7 +37,7 @@ namespace NExtends.Tests.Primitives.Strings
             extensionResult = NExtends.Primitives.StringExtensions.Replace(source, stringToReplace, "", StringComparison.InvariantCultureIgnoreCase);
             extensionElapsed = sw.ElapsedMilliseconds;
 
-            Assert.True(extensionElapsed < 10 || extensionElapsed < nativeElapsed * 10);
+            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
 
             //0 occurrences due to case sentitiviy - Native
             sw.Restart();
@@ -53,7 +53,7 @@ namespace NExtends.Tests.Primitives.Strings
 
             Assert.Equal(String.Empty, extensionResult.Replace("bar", "").Trim());
 
-            Assert.True(extensionElapsed < 10 || extensionElapsed < nativeElapsed * 10);
+            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
         }
 
         [Fact]
