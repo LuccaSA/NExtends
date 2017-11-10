@@ -308,8 +308,30 @@ namespace NExtends.Primitives
 			return Regex.Replace(text, @"[^a-zA-Z]+", "");
 		}
 
-		//Pour répéter des String xx fois
-		public static String Repeat(this String s, int count)
+        private static Dictionary<string, string> SanitizeSpecialCaractersMap = new Dictionary<string, string>()
+        {
+            {"Ø","O"},
+            {"ø","o"},
+            {"æ","ae"},
+            {"Æ","AE"},
+            {"œ","oe"},
+            {"Œ","OE"}
+        };
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/1946997/regex-replace-multiple-characters
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string SanitizeSpecialCaracters(this string text)
+        {
+            var exp = new Regex(@"[ØøæÆœŒ]");
+
+            return exp.Replace(text, (Match m) => SanitizeSpecialCaractersMap[m.Value]);
+        }
+
+        //Pour répéter des String xx fois
+        public static String Repeat(this String s, int count)
 		{
 			if (count > 1) //Plus d'une fois
 			{

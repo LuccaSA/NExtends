@@ -22,7 +22,19 @@ namespace NExtends.Tests
 			Assert.Equal(expected, result);
 		}
 
-		[Fact]
+        [Fact]
+        public void ShouldSanitizeSpecialCharacters()
+        {
+            var text = "ØøæÆœŒ";
+
+            var result = text.SanitizeSpecialCaracters();
+
+            var expected = "OoaeAEoeOE";
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
 		public void ShouldRemoveSpecialCharacters()
 		{
 			var text = @"Jean d'Anois-Dumesnil _[]|./""@{}()";
