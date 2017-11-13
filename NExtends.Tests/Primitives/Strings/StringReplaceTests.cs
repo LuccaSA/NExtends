@@ -5,7 +5,7 @@ using Xunit;
 
 namespace NExtends.Tests.Primitives.Strings
 {
-    public class StringExtensionsTest
+    public class StringReplaceTests
     {
         [Fact]
         public void StringReplaceExtensionShouldBeRelativelyFastComparerToNativeImplementationAndCaseSensitive()
