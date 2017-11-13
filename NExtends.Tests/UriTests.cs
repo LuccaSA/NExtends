@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NExtends.Primitives.Strings;
+using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NExtends.Primitives;
 using Xunit;
 
 namespace NExtends.Tests

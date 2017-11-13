@@ -1,4 +1,4 @@
-﻿using NExtends.Primitives;
+﻿using NExtends.Primitives.Strings;
 using Xunit;
 
 namespace NExtends.Tests.Primitives.Strings
