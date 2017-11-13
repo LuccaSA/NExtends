@@ -8,52 +8,70 @@ namespace NExtends.Tests.Primitives.Strings
     public class StringReplaceTests
     {
         [Fact]
-        public void StringReplaceExtensionShouldBeRelativelyFastComparerToNativeImplementationAndCaseSensitive()
+        public void CaseSensitiveStringReplace()
+        {
+            var source = "The cat is in the kitchen";
+            var expected = "@ cat is in the kitchen";
+
+            var result = NExtends.Primitives.StringExtensions.Replace(source, "The", "@", StringComparison.InvariantCulture);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void CaseInsensitiveStringReplace()
+        {
+            var source = "The cat is in the kitchen";
+            var expected = "@ cat is in @ kitchen";
+
+            var result = NExtends.Primitives.StringExtensions.Replace(source, "THE", "@", StringComparison.InvariantCultureIgnoreCase);
+
+            Assert.Equal(expected, result);
+        }
+
+        private long StringReplaceWithStopWatch(string source, string oldValue, string newValue, StringComparison stringComparison)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var extensionResult = NExtends.Primitives.StringExtensions.Replace(source, oldValue, newValue, stringComparison);
+
+            sw.Stop();
+
+            return sw.ElapsedMilliseconds;
+        }
+
+        [Fact]
+        public void StringReplaceShouldBeFastWhenNoMatchButLongChain()
         {
             string stringToReplace = "foo";
             string source = String.Join(" bar ", Enumerable.Range(0, 10000).Select(i => stringToReplace));
 
-            var sw = new Stopwatch();
+            var result = StringReplaceWithStopWatch(source, "whatever", String.Empty, StringComparison.InvariantCultureIgnoreCase);
 
-            //0 occurrence - Native
-            sw.Start();
-            var nativeResult = source.Replace("whatever", "");
-            var nativeElapsed = sw.ElapsedMilliseconds;
+            Assert.True(result < 200);
+        }
 
-            //0 occurrence - extension
-            sw.Restart();
-            var extensionResult = NExtends.Primitives.StringExtensions.Replace(source, "whatever", "", StringComparison.InvariantCultureIgnoreCase);
-            var extensionElapsed = sw.ElapsedMilliseconds;
+        [Fact]
+        public void StringReplaceShouldBeFastWhenCaseSensitiveReplacementBut10000CaseInsentitiveMatches()
+        {
+            string stringToReplace = "foo";
+            string source = String.Join(" bar ", Enumerable.Range(0, 10000).Select(i => stringToReplace));
 
-            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
+            var result = StringReplaceWithStopWatch(source, "FOO", String.Empty, StringComparison.InvariantCulture);
 
-            //10000 occurrences - Native
-            sw.Restart();
-            nativeResult = source.Replace(stringToReplace, "");
-            nativeElapsed = sw.ElapsedMilliseconds;
+            Assert.True(result < 200);
+        }
 
-            //10000 occurrences - extension
-            sw.Restart();
-            extensionResult = NExtends.Primitives.StringExtensions.Replace(source, stringToReplace, "", StringComparison.InvariantCultureIgnoreCase);
-            extensionElapsed = sw.ElapsedMilliseconds;
+        [Fact]
+        public void StringReplaceShouldBeFastWhen10000Matches()
+        {
+            string stringToReplace = "foo";
+            string source = String.Join(" bar ", Enumerable.Range(0, 10000).Select(i => stringToReplace));
 
-            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
+            var result = StringReplaceWithStopWatch(source, "foo", String.Empty, StringComparison.InvariantCultureIgnoreCase);
 
-            //0 occurrences due to case sentitiviy - Native
-            sw.Restart();
-            nativeResult = source.Replace("FOO", "");
-            nativeElapsed = sw.ElapsedMilliseconds;
-
-            Assert.Equal(source, nativeResult);
-
-            //10000 occurrences thanks to case sensitivity - extension
-            sw.Restart();
-            extensionResult = NExtends.Primitives.StringExtensions.Replace(source, "FOO", "", StringComparison.InvariantCultureIgnoreCase);
-            extensionElapsed = sw.ElapsedMilliseconds;
-
-            Assert.Equal(String.Empty, extensionResult.Replace("bar", "").Trim());
-
-            Assert.True(extensionElapsed < 100 || extensionElapsed < nativeElapsed * 10);
+            Assert.True(result < 200);
         }
 
         [Fact]
@@ -64,11 +82,7 @@ namespace NExtends.Tests.Primitives.Strings
 
             var result = NExtends.Primitives.StringExtensions.Replace(source, "{VALUE}", "valueModified", StringComparison.InvariantCultureIgnoreCase);
 
-            Assert.Equal(expected, result); //Case insensitive replacement
-
-            result = NExtends.Primitives.StringExtensions.Replace(source, "{VALUE}", "valueModified", StringComparison.InvariantCulture);
-
-            Assert.Equal(source, result); //Case sensitive = no remplacement
+            Assert.Equal(expected, result);
         }
     }
 }
