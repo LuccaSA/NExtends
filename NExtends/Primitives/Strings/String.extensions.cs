@@ -7,7 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NExtends.Primitives
+
+namespace NExtends.Primitives.Strings
 {
     public static class StringExtensions
     {
