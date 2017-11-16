@@ -200,35 +200,37 @@ namespace NExtends.Primitives.Strings
                 {
                     return ((int)o).ToDoubleQuotesJSON();
                 }
-                else if (o is double)
+
+                if (o is double)
                 {
                     return ((double)o).ToDoubleQuotesJSON();
                 }
-                else if (o is DateTime)
+
+                if (o is DateTime)
                 {
                     return ((DateTime)o).ToDoubleQuotesJSON();
                 }
-                else if (o is Uri)
+
+                var oUrl = o as Uri;
+                if (oUrl != null)
                 {
-                    return ((Uri)o).ToString().ToDoubleQuotesJSON();
+                    return oUrl.ToString().ToDoubleQuotesJSON();
                 }
-                else if (o is string)
+
+                if (o is string)
                 {
                     return o.ToString().ToDoubleQuotesJSON();
                 }
-                else if (o is bool)
+
+                if (o is bool)
                 {
                     return ((bool)o).ToDoubleQuotesJSON();
                 }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+
+                throw new NotImplementedException();
             }
-            else
-            {
-                return "null";
-            }
+
+            return "null";
         }
 
         public static Dictionary<TKey, TValue> SplitPipeValues<TKey, TValue>(this String str)
