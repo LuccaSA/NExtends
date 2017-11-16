@@ -155,35 +155,41 @@ namespace NExtends.Expressions
 
 		private static ConstantValue TryCalculateConstant(Expression e)
 		{
-			if (e is ConstantExpression)
-				return new ConstantValue(true, ((ConstantExpression)e).Value);
-			if (e is MemberExpression)
+            var constantExp = e as ConstantExpression;
+            if (constantExp != null)
+            {
+                return new ConstantValue(true, constantExp.Value);
+            }
+
+            var memberExp = e as MemberExpression;
+            if (memberExp != null)
 			{
-				var me = (MemberExpression)e;
-				var parentValue = TryCalculateConstant(me.Expression);
+				var parentValue = TryCalculateConstant(memberExp.Expression);
 				if (parentValue.IsDefined)
 				{
 					var result =
-						me.Member is FieldInfo
-							? ((FieldInfo)me.Member).GetValue(parentValue.Value)
-							: ((PropertyInfo)me.Member).GetValue(parentValue.Value);
+                        memberExp.Member is FieldInfo
+							? ((FieldInfo)memberExp.Member).GetValue(parentValue.Value)
+							: ((PropertyInfo)memberExp.Member).GetValue(parentValue.Value);
 					return new ConstantValue(true, result);
 				}
 			}
-			if (e is NewArrayExpression)
+
+            var newArrayExp = e as NewArrayExpression;
+            if (newArrayExp != null)
 			{
-				var ae = ((NewArrayExpression)e);
-				var result = ae.Expressions.Select(TryCalculateConstant);
+				var result = newArrayExp.Expressions.Select(TryCalculateConstant);
 				if (result.All(i => i.IsDefined))
 					return new ConstantValue(true, result.Select(i => i.Value).ToArray());
 			}
-			if (e is ConditionalExpression)
+
+            var conditionalExp = e as ConditionalExpression;
+            if (conditionalExp != null)
 			{
-				var ce = (ConditionalExpression)e;
-				var evaluatedTest = TryCalculateConstant(ce.Test);
+				var evaluatedTest = TryCalculateConstant(conditionalExp.Test);
 				if (evaluatedTest.IsDefined)
 				{
-					return TryCalculateConstant(Equals(evaluatedTest.Value, true) ? ce.IfTrue : ce.IfFalse);
+					return TryCalculateConstant(Equals(evaluatedTest.Value, true) ? conditionalExp.IfTrue : conditionalExp.IfFalse);
 				}
 			}
 
