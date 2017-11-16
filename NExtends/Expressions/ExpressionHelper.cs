@@ -16,12 +16,11 @@ namespace NExtends.Expressions
         /// <summary>
         /// Permet de transférer un délégué d'un enfant vers son parent étant connu le nom de la propriété qui permet de passer du parent à l'enfant
         /// </summary>
-        /// <typeparam name="TChild">Le type enfant</typeparam>
         /// <typeparam name="TParent">Le type parent</typeparam>
         /// <param name="expression">L'expression (MemberExpression en général) sur l'enfant</param>
         /// <param name="childName">Le nom de la propriété permettant d'accéder à l'enfant depuis le parent</param>
         /// <returns></returns>
-        public static LambdaExpression TransfertToParent<TChild, TParent>(LambdaExpression expression, string childName)
+        public static LambdaExpression TransfertToParent<TParent>(LambdaExpression expression, string childName)
         {
             var param = Expression.Parameter(typeof(TParent), "p");
             var body = Expression.MakeMemberAccess(param, typeof(TParent).GetProperty(childName));
