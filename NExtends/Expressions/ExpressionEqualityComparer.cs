@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NExtends.Expressions
 {
@@ -15,10 +14,7 @@ namespace NExtends.Expressions
 	/// </summary>
 	public static class ExpressionEqualityComparer
 	{
-		public static bool Eq(LambdaExpression x, LambdaExpression y)
-		{
-			return ExpressionsEqual(x, y, null, null);
-		}
+		public static bool Eq(LambdaExpression x, LambdaExpression y) => ExpressionsEqual(x, y, null, null);
 
 		public static bool Eq<TSource1, TSource2, TValue>(Expression<Func<TSource1, TSource2, TValue>> x, Expression<Func<TSource1, TSource2, TValue>> y)
 		{
@@ -32,95 +28,131 @@ namespace NExtends.Expressions
 
 		private static bool ExpressionsEqual(Expression x, Expression y, LambdaExpression rootX, LambdaExpression rootY)
 		{
-			if (ReferenceEquals(x, y)) return true;
-			if (x == null || y == null) return false;
+			bool? result = ConstantOrNodeEquals(x, y);
+			if (result.HasValue)
+			{
+				return result.Value;
+			}
 
-			var valueX = TryCalculateConstant(x);
-			var valueY = TryCalculateConstant(y);
+			switch (x)
+			{
+				case LambdaExpression lx: return EqualsLambda(y, lx);
+				case MemberExpression mex: return EqualsMember(y, rootX, rootY, mex);
+				case BinaryExpression bx: return BinaryEquals(y, rootX, rootY, bx);
+				case UnaryExpression ux: return UnaryEquals(y, rootX, rootY, ux);
+				case ParameterExpression px: return ParameterEquals(y, rootX, rootY, px);
+				case MethodCallExpression mcx: return MethodCallEquals(y, rootX, rootY, mcx);
+				case MemberInitExpression mix: return MemberInitEquals(y, rootX, rootY, mix);
+				case NewArrayExpression nax: return NewArrayEquals(y, rootX, rootY, nax);
+				case NewExpression nx: return NewEquals(y, rootX, rootY, nx);
+				case ConditionalExpression cx: return ConditionalEquals(y, rootX, rootY, cx);
+				default:
+					throw new NotImplementedException(x.ToString());
+			}
+		}
+
+		private static bool? ConstantOrNodeEquals(Expression x, Expression y)
+		{
+			if (ReferenceEquals(x, y))
+			{
+				return true;
+			}
+			if (x == null || y == null)
+			{
+				return false;
+			}
+
+			ConstantValue valueX = TryCalculateConstant(x);
+			ConstantValue valueY = TryCalculateConstant(y);
 
 			if (valueX.IsDefined && valueY.IsDefined)
 				return ValuesEqual(valueX.Value, valueY.Value);
 
-			if (x.NodeType != y.NodeType
-				|| x.Type != y.Type)
+			if (x.NodeType == y.NodeType && x.Type == y.Type)
 			{
-				if (IsAnonymousType(x.Type) && IsAnonymousType(y.Type))
-					throw new NotImplementedException("Comparison of Anonymous Types is not supported");
-				return false;
+				return null;
 			}
 
-			if (x is LambdaExpression lx)
-			{
-				var ly = (LambdaExpression)y;
-				var paramsX = lx.Parameters;
-				var paramsY = ly.Parameters;
-				return CollectionsEqual(paramsX, paramsY, lx, ly) && ExpressionsEqual(lx.Body, ly.Body, lx, ly);
-			}
-			if (x is MemberExpression mex)
-			{
-				var mey = (MemberExpression)y;
-				return Equals(mex.Member, mey.Member) && ExpressionsEqual(mex.Expression, mey.Expression, rootX, rootY);
-			}
-			if (x is BinaryExpression bx)
-			{
-				var by = (BinaryExpression)y;
-				return bx.Method == @by.Method && ExpressionsEqual(bx.Left, @by.Left, rootX, rootY) &&
-					   ExpressionsEqual(bx.Right, @by.Right, rootX, rootY);
-			}
-			if (x is UnaryExpression ux)
-			{
-				var uy = (UnaryExpression)y;
-				return ux.Method == uy.Method && ExpressionsEqual(ux.Operand, uy.Operand, rootX, rootY);
-			}
-			if (x is ParameterExpression px)
-			{
-				var py = (ParameterExpression)y;
-				return rootX.Parameters.IndexOf(px) == rootY.Parameters.IndexOf(py);
-			}
-			if (x is MethodCallExpression mcx)
-			{
-				var mcy = (MethodCallExpression)y;
-				return mcx.Method == mcy.Method
-					   && ExpressionsEqual(mcx.Object, mcy.Object, rootX, rootY)
-					   && CollectionsEqual(mcx.Arguments, mcy.Arguments, rootX, rootY);
-			}
-			if (x is MemberInitExpression mix)
-			{
-				var miy = (MemberInitExpression)y;
-				return ExpressionsEqual(mix.NewExpression, miy.NewExpression, rootX, rootY)
-					   && MemberInitsEqual(mix.Bindings, miy.Bindings, rootX, rootY);
-			}
-			if (x is NewArrayExpression nax)
-			{
-				var nay = (NewArrayExpression)y;
-				return CollectionsEqual(nax.Expressions, nay.Expressions, rootX, rootY);
-			}
-			if (x is NewExpression nx)
-			{
-				var ny = (NewExpression)y;
-				return
-					Equals(nx.Constructor, ny.Constructor)
-					&& CollectionsEqual(nx.Arguments, ny.Arguments, rootX, rootY)
-					&& (nx.Members == null && ny.Members == null
-						|| nx.Members != null && ny.Members != null && CollectionsEqual(nx.Members, ny.Members));
-			}
-			if (x is ConditionalExpression cx)
-			{
-				var cy = (ConditionalExpression)y;
-				return
-					ExpressionsEqual(cx.Test, cy.Test, rootX, rootY)
-					&& ExpressionsEqual(cx.IfFalse, cy.IfFalse, rootX, rootY)
-					&& ExpressionsEqual(cx.IfTrue, cy.IfTrue, rootX, rootY);
-			}
+			if (IsAnonymousType(x.Type) && IsAnonymousType(y.Type))
+				throw new NotImplementedException("Comparison of Anonymous Types is not supported");
 
-			throw new NotImplementedException(x.ToString());
+			return false;
 		}
 
-		private static Boolean IsAnonymousType(Type type)
+		private static bool ConditionalEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, ConditionalExpression cx)
 		{
-			Boolean hasCompilerGeneratedAttribute = type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
-			Boolean nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
-			Boolean isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;
+			var cy = (ConditionalExpression)y;
+			return ExpressionsEqual(cx.Test, cy.Test, rootX, rootY)
+				&& ExpressionsEqual(cx.IfFalse, cy.IfFalse, rootX, rootY)
+				&& ExpressionsEqual(cx.IfTrue, cy.IfTrue, rootX, rootY);
+		}
+
+		private static bool NewEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, NewExpression nx)
+		{
+			var ny = (NewExpression)y;
+			return Equals(nx.Constructor, ny.Constructor) && CollectionsEqual(nx.Arguments, ny.Arguments, rootX, rootY)
+				&& (nx.Members == null && ny.Members == null || nx.Members != null && ny.Members != null && CollectionsEqual(nx.Members, ny.Members));
+		}
+
+		private static bool NewArrayEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, NewArrayExpression nax)
+		{
+			var nay = (NewArrayExpression)y;
+			return CollectionsEqual(nax.Expressions, nay.Expressions, rootX, rootY);
+		}
+
+		private static bool MemberInitEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, MemberInitExpression mix)
+		{
+			var miy = (MemberInitExpression)y;
+			return ExpressionsEqual(mix.NewExpression, miy.NewExpression, rootX, rootY)
+					&& MemberInitsEqual(mix.Bindings, miy.Bindings, rootX, rootY);
+		}
+
+		private static bool MethodCallEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, MethodCallExpression mcx)
+		{
+			var mcy = (MethodCallExpression)y;
+			return mcx.Method == mcy.Method
+					&& ExpressionsEqual(mcx.Object, mcy.Object, rootX, rootY)
+					&& CollectionsEqual(mcx.Arguments, mcy.Arguments, rootX, rootY);
+		}
+
+		private static bool ParameterEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, ParameterExpression px)
+		{
+			var py = (ParameterExpression)y;
+			return rootX.Parameters.IndexOf(px) == rootY.Parameters.IndexOf(py);
+		}
+
+		private static bool UnaryEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, UnaryExpression ux)
+		{
+			var uy = (UnaryExpression)y;
+			return ux.Method == uy.Method && ExpressionsEqual(ux.Operand, uy.Operand, rootX, rootY);
+		}
+
+		private static bool BinaryEquals(Expression y, LambdaExpression rootX, LambdaExpression rootY, BinaryExpression bx)
+		{
+			var by = (BinaryExpression)y;
+			return bx.Method == by.Method && ExpressionsEqual(bx.Left, by.Left, rootX, rootY) &&
+					ExpressionsEqual(bx.Right, by.Right, rootX, rootY);
+		}
+
+		private static bool EqualsMember(Expression y, LambdaExpression rootX, LambdaExpression rootY, MemberExpression mex)
+		{
+			var mey = (MemberExpression)y;
+			return Equals(mex.Member, mey.Member) && ExpressionsEqual(mex.Expression, mey.Expression, rootX, rootY);
+		}
+
+		private static bool EqualsLambda(Expression y, LambdaExpression lx)
+		{
+			var ly = (LambdaExpression)y;
+			ReadOnlyCollection<ParameterExpression> paramsX = lx.Parameters;
+			ReadOnlyCollection<ParameterExpression> paramsY = ly.Parameters;
+			return CollectionsEqual(paramsX, paramsY, lx, ly) && ExpressionsEqual(lx.Body, ly.Body, lx, ly);
+		}
+
+		private static bool IsAnonymousType(Type type)
+		{
+			bool hasCompilerGeneratedAttribute = type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
+			bool nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
+			bool isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;
 
 			return isAnonymousType;
 		}
@@ -192,7 +224,6 @@ namespace NExtends.Expressions
 					return TryCalculateConstant(Equals(evaluatedTest.Value, true) ? conditionalExp.IfTrue : conditionalExp.IfFalse);
 				}
 			}
-
 			return default(ConstantValue);
 		}
 
@@ -223,9 +254,9 @@ namespace NExtends.Expressions
 				Value = value;
 			}
 
-			public bool IsDefined { get; private set; }
+			public bool IsDefined { get; }
 
-			public object Value { get; private set; }
+			public object Value { get; }
 		}
 	}
 }
