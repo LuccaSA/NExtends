@@ -7,17 +7,17 @@ namespace NExtends.Expressions
 	{
 		Expression CurrentParameterExpression { get; set; }
 
-		public static Expression<Func<TIn, TOut>> Merge<TIn, TA, TOut>(Expression<Func<TIn, TA>> entryPoint, Expression<Func<TA, TOut>> expression1)
+		public static Expression<Func<TIn, TOut>> Merge<TIn, TOut>(LambdaExpression entryPoint, LambdaExpression expression1)
 		{
-			return new ExpressionMerger().MergeAll<TIn, TA, TOut>(entryPoint, expression1);
+			return new ExpressionMerger().MergeAll<TIn, TOut>(entryPoint, expression1);
 		}
 
-		public static Expression<Func<TIn, TOut>> Merge<TIn, TA, TB, TOut>(Expression<Func<TIn, TA>> entryPoint, Expression<Func<TA, TB>> expression1, Expression<Func<TB, TOut>> expression2)
+		public static Expression<Func<TIn, TOut>> Merge<TIn, TOut>(LambdaExpression entryPoint, LambdaExpression expression1, LambdaExpression expression2)
 		{
-			return new ExpressionMerger().MergeAll<TIn, TA, TOut>(entryPoint, expression1, expression2);
+			return new ExpressionMerger().MergeAll<TIn, TOut>(entryPoint, expression1, expression2);
 		}
 
-		protected Expression<Func<TIn, TOut>> MergeAll<TIn, T, TOut>(Expression<Func<TIn, T>> entryPoint, params LambdaExpression[] expressions)
+		protected Expression<Func<TIn, TOut>> MergeAll<TIn, TOut>(LambdaExpression entryPoint, params LambdaExpression[] expressions)
 		{
 			CurrentParameterExpression = entryPoint.Body;
 

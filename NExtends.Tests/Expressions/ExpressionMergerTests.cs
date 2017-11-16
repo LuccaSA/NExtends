@@ -1,4 +1,6 @@
 ﻿using NExtends.Expressions;
+using System;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace NExtends.Tests.Expressions
@@ -26,8 +28,10 @@ namespace NExtends.Tests.Expressions
 		public void Expressions2Merger()
 		{
 			var user = new User { Id = 2 };
+            Expression<Func<User, int>> entryPoint = u => u.Id;
+            Expression<Func<int, bool>> expression = i => i == 2;
 
-			var result = ExpressionMerger.Merge<User, int, bool>(u => u.Id, i => i == 2);
+            var result = ExpressionMerger.Merge<User, bool>(entryPoint, expression);
 
 			Assert.True(result.Compile()(user));
 		}
@@ -36,8 +40,10 @@ namespace NExtends.Tests.Expressions
 		public void Expressions3Merger()
 		{
 			var dpt = new Department { Head = new User { Id = 2 } };
+            Expression<Func<Department, IUser>> entryPoint = d => d.Head;
+            Expression<Func<IUser, bool>> expression = u => u.Id == 2;
 
-			var result = ExpressionMerger.Merge<Department, IUser, bool>(d => d.Head, u => u.Id == 2);
+            var result = ExpressionMerger.Merge<Department, bool>(entryPoint, expression);
 
 			Assert.True(result.Compile()(dpt));
 		}
