@@ -16,7 +16,8 @@ namespace NExtends.Primitives.Strings
 
         public static DateTime ParseJsonDate(this string date)
         {
-            var result = new DateTime();
+            DateTime result;
+
             //http://stackoverflow.com/questions/5521553/best-way-to-convert-javascript-date-to-net-date
             if (!DateTime.TryParseExact(date.Substring(0, 24), "ddd MMM d yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out result))
             {
@@ -24,6 +25,7 @@ namespace NExtends.Primitives.Strings
                 //http://stackoverflow.com/questions/1877788/javascript-date-to-c-sharp-via-ajax pour ie
                 result = DateTime.ParseExact(date, "ddd MMM d HH:mm:ss UTCzzzzz yyyy", CultureInfo.InvariantCulture);
             }
+
             return result;
         }
 
