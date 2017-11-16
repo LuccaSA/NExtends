@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NExtends.Primitives.Strings;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;

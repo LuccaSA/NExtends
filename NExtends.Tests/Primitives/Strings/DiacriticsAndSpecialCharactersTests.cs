@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NExtends.Primitives;
+﻿using NExtends.Primitives.Strings;
 using Xunit;
 
-namespace NExtends.Tests
+namespace NExtends.Tests.Primitives.Strings
 {
-    public class StringExtensionsTests
+    public class DiacriticsAndSpecialCharactersTests
     {
         [Fact]
         public void ShouldRemoveDiacritics()
@@ -23,18 +18,6 @@ namespace NExtends.Tests
         }
 
         [Fact]
-        public void ShouldSanitizeSpecialCharacters()
-        {
-            var text = "ØøæÆœŒ";
-
-            var result = text.SanitizeSpecialCaracters();
-
-            var expected = "OoaeAEoeOE";
-
-            Assert.Equal(expected, result);
-        }
-
-        [Fact]
         public void ShouldRemoveSpecialCharacters()
         {
             var text = @"Jean d'Anois-Dumesnil _[]|./""@{}()";
@@ -42,6 +25,18 @@ namespace NExtends.Tests
             var result = text.RemoveSpecialCaracters();
 
             var expected = "JeandAnoisDumesnil";
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void ShouldSanitizeSpecialCharacters()
+        {
+            var text = "ØøæÆœŒ";
+
+            var result = text.SanitizeSpecialCaracters();
+
+            var expected = "OoaeAEoeOE";
 
             Assert.Equal(expected, result);
         }

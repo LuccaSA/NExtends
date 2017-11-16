@@ -7,7 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NExtends.Primitives
+
+namespace NExtends.Primitives.Strings
 {
     public static class StringExtensions
     {
@@ -15,7 +16,8 @@ namespace NExtends.Primitives
 
         public static DateTime ParseJsonDate(this string date)
         {
-            var result = new DateTime();
+            DateTime result;
+
             //http://stackoverflow.com/questions/5521553/best-way-to-convert-javascript-date-to-net-date
             if (!DateTime.TryParseExact(date.Substring(0, 24), "ddd MMM d yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out result))
             {
@@ -23,6 +25,7 @@ namespace NExtends.Primitives
                 //http://stackoverflow.com/questions/1877788/javascript-date-to-c-sharp-via-ajax pour ie
                 result = DateTime.ParseExact(date, "ddd MMM d HH:mm:ss UTCzzzzz yyyy", CultureInfo.InvariantCulture);
             }
+
             return result;
         }
 
@@ -167,11 +170,11 @@ namespace NExtends.Primitives
         }
         public static String ToJSON(this String s)
         {
-            return JsonConvert.SerializeObject(s);//  "\"" + s.JSONQuotesProtect() + "\"";
+            return JsonConvert.SerializeObject(s);
         }
         public static String ToDoubleQuotesJSON(this String s)
         {
-            return JsonConvert.SerializeObject(s);//return "\"" + s.JSONQuotesProtect() + "\"";
+            return JsonConvert.SerializeObject(s);
         }
         public static String ToDoubleQuotesJSON(this int i)
         {
@@ -193,43 +196,41 @@ namespace NExtends.Primitives
         {
             if (o != null)
             {
-                if (o.GetType() == typeof(int))
+                if (o is int)
                 {
                     return ((int)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(double))
+
+                if (o is double)
                 {
                     return ((double)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(DateTime))
+
+                if (o is DateTime)
                 {
                     return ((DateTime)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(Uri))
+
+                var oUrl = o as Uri;
+                if (oUrl != null)
                 {
-                    return ((Uri)o).ToString().ToDoubleQuotesJSON();
+                    return oUrl.ToString().ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(string))
+
+                if (o is string)
                 {
                     return o.ToString().ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(bool))
+
+                if (o is bool)
                 {
                     return ((bool)o).ToDoubleQuotesJSON();
                 }
-                //else if (o.GetType() == typeof(SearchResultEntry))
-                //{
-                //    return ((SearchResultEntry)o).ToUserJSON();
-                //}
-                else
-                {
-                    throw new NotImplementedException();
-                }
+
+                throw new NotImplementedException();
             }
-            else
-            {
-                return "null";
-            }
+
+            return "null";
         }
 
         public static Dictionary<TKey, TValue> SplitPipeValues<TKey, TValue>(this String str)
@@ -469,6 +470,7 @@ namespace NExtends.Primitives
 
         /// <summary>
         /// String replacement with case insensivity support
+        /// https://stackoverflow.com/questions/6275980/string-replace-ignoring-case
         /// </summary>
         /// <param name="originalString"></param>
         /// <param name="oldValue">The string to be replaced.</param>
@@ -477,24 +479,21 @@ namespace NExtends.Primitives
         /// <returns></returns>
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
         {
-            // source
-            // http://stackoverflow.com/questions/5549426/is-there-a-case-insensitive-string-replace-in-net-without-using-regex
+            var regexOptions = RegexOptions.IgnoreCase;
 
-            var startIndex = 0;
-            while (true)
+            if (comparisonType == StringComparison.CurrentCulture
+                || comparisonType == StringComparison.InvariantCulture
+                || comparisonType == StringComparison.Ordinal)
             {
-                startIndex = originalString.IndexOf(oldValue, startIndex, comparisonType);
-                if (startIndex == -1)
-                {
-                    break;
-                }
-
-                originalString = originalString.Substring(0, startIndex) + newValue + originalString.Substring(startIndex + oldValue.Length);
-
-                startIndex += newValue.Length;
+                regexOptions = RegexOptions.CultureInvariant;
             }
 
-            return originalString;
+            return Regex.Replace(
+                originalString,
+                Regex.Escape(oldValue),
+                newValue.Replace("$", "$$"),
+                regexOptions
+            );
         }
 
         public static void AppendLineFormat(this StringBuilder sb, string format, params object[] args)
