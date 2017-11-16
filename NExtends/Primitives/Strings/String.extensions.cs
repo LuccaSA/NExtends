@@ -170,11 +170,11 @@ namespace NExtends.Primitives.Strings
         }
         public static String ToJSON(this String s)
         {
-            return JsonConvert.SerializeObject(s);//  "\"" + s.JSONQuotesProtect() + "\"";
+            return JsonConvert.SerializeObject(s);
         }
         public static String ToDoubleQuotesJSON(this String s)
         {
-            return JsonConvert.SerializeObject(s);//return "\"" + s.JSONQuotesProtect() + "\"";
+            return JsonConvert.SerializeObject(s);
         }
         public static String ToDoubleQuotesJSON(this int i)
         {
@@ -196,34 +196,30 @@ namespace NExtends.Primitives.Strings
         {
             if (o != null)
             {
-                if (o.GetType() == typeof(int))
+                if (o is int)
                 {
                     return ((int)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(double))
+                else if (o is double)
                 {
                     return ((double)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(DateTime))
+                else if (o is DateTime)
                 {
                     return ((DateTime)o).ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(Uri))
+                else if (o is Uri)
                 {
                     return ((Uri)o).ToString().ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(string))
+                else if (o is string)
                 {
                     return o.ToString().ToDoubleQuotesJSON();
                 }
-                else if (o.GetType() == typeof(bool))
+                else if (o is bool)
                 {
                     return ((bool)o).ToDoubleQuotesJSON();
                 }
-                //else if (o.GetType() == typeof(SearchResultEntry))
-                //{
-                //    return ((SearchResultEntry)o).ToUserJSON();
-                //}
                 else
                 {
                     throw new NotImplementedException();
