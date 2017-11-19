@@ -5,13 +5,18 @@ namespace NExtends.Context
 {
 	public class CultureContext : IDisposable
 	{
-		private CultureInfo originalCulture;
-		private CultureInfo originalUICulture;
+		private readonly CultureInfo _originalCulture;
+		private readonly CultureInfo _originalUiCulture;
 
-		public CultureContext(CultureInfo culture)
+        public CultureContext(string culture)
+            : this(new CultureInfo(culture))
+        {
+        }
+
+        public CultureContext(CultureInfo culture)
 		{
-			originalCulture = CultureInfo.CurrentCulture;
-			originalUICulture = CultureInfo.CurrentUICulture;
+			_originalCulture = CultureInfo.CurrentCulture;
+			_originalUiCulture = CultureInfo.CurrentUICulture;
 
 			CultureInfo.CurrentCulture = culture;
 			CultureInfo.CurrentUICulture = culture;
@@ -19,8 +24,8 @@ namespace NExtends.Context
 
 		public void Dispose()
 		{
-			CultureInfo.CurrentCulture = originalCulture;
-			CultureInfo.CurrentUICulture = originalUICulture;
+			CultureInfo.CurrentCulture = _originalCulture;
+			CultureInfo.CurrentUICulture = _originalUiCulture;
 		}
 	}
 }
