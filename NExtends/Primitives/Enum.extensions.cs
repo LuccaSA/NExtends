@@ -56,24 +56,6 @@ namespace NExtends.Primitives
 		}
 
 		/// <summary>
-		/// Converti un enum {Option1 = 1, Option2 = 2} en JSON {Option1: 1, Option2: 2}
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public static String EnumToJSON<T>() where T : struct
-		{
-			var JSONProperty = new Func<T, String>(e =>
-			{
-				return String.Format("{0}:{1}",
-					e.ToString().ToDoubleQuotesJSON(),
-					Enum.Format(typeof(T), e, "d")
-				);
-			});
-
-			return "{" + String.Join(",", EnumToList<T>().Select(JSONProperty).ToArray()) + "}";
-		}
-
-		/// <summary>
 		/// Simplifie l'appel à Enum.Parse
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -197,5 +179,5 @@ namespace NExtends.Primitives
 			var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
 			return ((DescriptionAttribute)attributes.ElementAt(0)).Description;
 		}
-	}
+    }
 }

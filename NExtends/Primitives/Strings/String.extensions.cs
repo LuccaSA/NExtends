@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,67 +13,12 @@ namespace NExtends.Primitives.Strings
     {
         private const string DEFAULT_ELLIPSIS = "...";
 
-        public static DateTime ParseJsonDate(this string date)
-        {
-            DateTime result;
-
-            //http://stackoverflow.com/questions/5521553/best-way-to-convert-javascript-date-to-net-date
-            if (!DateTime.TryParseExact(date.Substring(0, 24), "ddd MMM d yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out result))
-            {
-                //Ie, of course
-                //http://stackoverflow.com/questions/1877788/javascript-date-to-c-sharp-via-ajax pour ie
-                result = DateTime.ParseExact(date, "ddd MMM d HH:mm:ss UTCzzzzz yyyy", CultureInfo.InvariantCulture);
-            }
-
-            return result;
-        }
-
         public static string Format(this string s, params object[] args)
         {
             return args != null ? string.Format(s, args) : s;
         }
-         
-        //Validation des numéro de sécu INSEE
-        //version de gabsoftware
-        //http://www.developpez.net/forums/d677820/php/langage/regex/verification-numero-securite-sociale/
-        private const string REGULAR_INSEE_NUMBER = @"([1-3])[\s\.\-]?(\d{2})[\s\.\-]?(0\d|[2-35-9]\d|[14][0-2])[\s\.\-]?(0[1-9]|[1-9]\d|2[abAB])[\s\.\-]?(\d{3})[\s\.\-]?(\d{3})[\s\.\-\|]{0,3}";
-        private const string TEMPORARY_INSEE_NUMBER = @"(?<temp>[7-9][\s\.\-]?\d{2}[\s\.\-]?\d{2}[\s\.\-]?\d{2}[\s\.\-]?\d{3}[\s\.\-]?\d{3}[\s\.\-\|]?)";
-        private const string KEY_INSEE_NUMBER = @"(?<key>[0-8]\d|9[0-7])?";
-
-        static Regex isINSEENumber = new Regex(String.Format(@"^(({0})|({1})){2}$", REGULAR_INSEE_NUMBER, TEMPORARY_INSEE_NUMBER, KEY_INSEE_NUMBER), RegexOptions.Compiled);
 
         public static bool IsGuid(this string input) => Guid.TryParse(input, out Guid result);
-
-        public static bool IsINSEENumber(this string input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return false;
-            }
-
-            var match = isINSEENumber.Match(input);
-            if (!match.Success)
-            {
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(match.Groups["key"].Value))
-            {
-                var number = Int64.Parse(string.Join("", input.Split(' ', '.', '-', '|')).Replace("2a", "19", StringComparison.OrdinalIgnoreCase).Replace("2b", "18", StringComparison.OrdinalIgnoreCase));
-                var rest = ((number / 100) + number % 100) % 97;
-                if (rest != 0)
-                {
-                    return false;
-                }
-            }
-            else if (!string.IsNullOrEmpty(match.Groups["temp"].Value))
-            {
-                // Si le numéro est de type temporaire, on impose la clé (donc ça doit passer dans le if au-dessus)
-                return false;
-            }
-
-            return true;
-        }
 
         /// <summary>
         /// On passe par un MailAddress, plus simple
@@ -115,117 +59,6 @@ namespace NExtends.Primitives.Strings
             }
         }
 
-        public static String JSONProtect(this String value)
-        {
-            if (value != null)
-            {
-                String json = value.Replace("\r\n", "<br>");
-                json = json.Replace("\n", "<br>");
-                json = json.Replace("\r", "<br>");
-
-                json = json.Replace("\\", "\\\\");
-
-                json = json.Replace("'", "\\'");
-                json = json.Replace("\"", "\\\"");
-
-                return json;
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-        public static String JSONQuotesProtect(this String value)
-        {
-            if (value != null)
-            {
-                String json = value.Replace("\r\n", "<br>");
-                json = json.Replace("\n", "<br>");
-                json = json.Replace("\r", "<br>");
-
-                json = json.Replace("\\", "\\\\");
-
-                json = json.Replace("\"", "\\\"");
-
-                return json;
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-        //Quelqueq méthodes pour convertir des types basiques en JSON
-        public static String ToJSON(this bool b)
-        {
-            return b.ToString().ToLower();
-        }
-        public static String ToJSON(this String s)
-        {
-            return JsonConvert.SerializeObject(s);
-        }
-        public static String ToDoubleQuotesJSON(this String s)
-        {
-            return JsonConvert.SerializeObject(s);
-        }
-        public static String ToDoubleQuotesJSON(this int i)
-        {
-            return i.ToJSON();
-        }
-        public static String ToDoubleQuotesJSON(this double d)
-        {
-            return d.ToJSON();
-        }
-        public static String ToDoubleQuotesJSON(this DateTime d)
-        {
-            return d.ToJQuery();
-        }
-        public static String ToDoubleQuotesJSON(this bool b)
-        {
-            return b.ToJSON();
-        }
-        public static String ToDoubleQuotesJSON(this object o)
-        {
-            if (o != null)
-            {
-                if (o is int)
-                {
-                    return ((int)o).ToDoubleQuotesJSON();
-                }
-
-                if (o is double)
-                {
-                    return ((double)o).ToDoubleQuotesJSON();
-                }
-
-                if (o is DateTime)
-                {
-                    return ((DateTime)o).ToDoubleQuotesJSON();
-                }
-
-                var oUrl = o as Uri;
-                if (oUrl != null)
-                {
-                    return oUrl.ToString().ToDoubleQuotesJSON();
-                }
-
-                if (o is string)
-                {
-                    return o.ToString().ToDoubleQuotesJSON();
-                }
-
-                if (o is bool)
-                {
-                    return ((bool)o).ToDoubleQuotesJSON();
-                }
-
-                throw new NotImplementedException();
-            }
-
-            return "null";
-        }
-
         public static Dictionary<TKey, TValue> SplitPipeValues<TKey, TValue>(this String str)
         {
             if (str != null && str.Contains("|"))
@@ -243,16 +76,6 @@ namespace NExtends.Primitives.Strings
         public static Dictionary<String, String> SplitValues(this String KVPValues)
         {
             return KVPValues.SplitPipeValues<string, string>();
-        }
-
-        public static String ToXML(this String s)
-        {
-            return "<![CDATA[" + s + "]]>";
-        }
-        public static String XMLProtect(this String value)
-        {
-            String xml = "<![CDATA[" + value + "]]>";
-            return xml;
         }
 
         // In order to be able to do a Contains() using ignorecase
