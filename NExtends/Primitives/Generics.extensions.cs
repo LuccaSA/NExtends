@@ -99,18 +99,6 @@ namespace NExtends.Primitives
 		}
         
 		/// <summary>
-		/// Permet d'ajouter une clé de type Enum sans devoir mettre un .ToString()
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dic"></param>
-		/// <param name="enumValue"></param>
-		/// <returns></returns>
-		public static void Add<T>(this Dictionary<string, T> dic, Enum enumKey, T value)
-		{
-			dic.Add(enumKey.ToString(), value);
-		}
-
-		/// <summary>
 		/// Permet de renommer une clé
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
