@@ -99,18 +99,13 @@ namespace NExtends.Primitives
 		}
         
 		/// <summary>
-		/// Permet de renommer une clé
+		/// Swap specifi key
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dict"></param>
-		/// <param name="oldKey"></param>
-		/// <param name="newKey"></param>
-		public static void UpdateKey<T>(this Dictionary<string, T> dict, string oldKey, string newKey)
+		public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey oldKey, TKey newKey)
 		{
-			T value;
-			if (dict.TryGetValue(newKey, out value))
+            if (dict.TryGetValue(newKey, out TValue value))
 			{
-				throw new Exception("The new key is already present in the dictionary");
+				throw new ArgumentException("The new key is already present in the dictionary");
 			}
 			if (dict.TryGetValue(oldKey, out value))
 			{
@@ -119,7 +114,7 @@ namespace NExtends.Primitives
 			}
 			else
 			{
-				throw new Exception("The key '" + oldKey + "' does not exist in the dictionary");
+				throw new KeyNotFoundException("The key '" + oldKey + "' does not exist in the dictionary");
 			}
 		}
 
