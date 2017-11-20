@@ -14,16 +14,20 @@ namespace NExtends.Primitives
         /// </summary>
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
 		{
-			return new Dictionary<TKey, TValue>(source);
-		}
+#if NETCOREAPP2_0
+            return new Dictionary<TKey, TValue>(source);
+#else
+            return source.ToDictionary(item => item.Key, item => item.Value);
+#endif
+        }
 
-		/// <summary>
-		/// Permet d'avoir les collections liées aux clés étrangères compatible entre le DBML et l'EDMX
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <param name="elements"></param>
-		public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
+        /// <summary>
+        /// Permet d'avoir les collections liées aux clés étrangères compatible entre le DBML et l'EDMX
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="elements"></param>
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
 		{
 			foreach (var element in elements)
 			{
@@ -97,16 +101,20 @@ namespace NExtends.Primitives
 		/// <summary>
 		/// Swap specifi key
 		/// </summary>
-		public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey oldKey, TKey newKey)
+		public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey oldKey, TKey newKey)
 		{
-            if (dict.TryGetValue(newKey, out TValue value))
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            if (source.TryGetValue(newKey, out TValue value))
 			{
 				throw new ArgumentException("The new key is already present in the dictionary");
 			}
-			if (dict.TryGetValue(oldKey, out value))
+			if (source.TryGetValue(oldKey, out value))
 			{
-				dict.Remove(oldKey);
-				dict.Add(newKey, value);
+				source.Remove(oldKey);
+				source.Add(newKey, value);
 			}
 			else
 			{

@@ -32,6 +32,31 @@ namespace NExtends.Tests
             Assert.Empty(Enumerable.Empty<KeyValuePair<string, string>>().ToDictionary());
         }
 
+        [Fact]
+        public void UpdateKeyTest()
+        {
+            var dic = new Dictionary<string, string>
+            {
+                { "x","value_x"},
+                { "y","value_y"},
+                { "z","value_z"}
+            };
+            dic.UpdateKey("x","xx");
+            Assert.Equal("value_x", dic["xx"]);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                dic.UpdateKey("y", "z");
+            });
+            Assert.Throws<KeyNotFoundException>(() =>
+            {
+                dic.UpdateKey("aaa", "bbbb");
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                Dictionary<string, string> nulled = null;
+                nulled.UpdateKey("aaa", "bbbb");
+            });
+        }
 
         [Fact]
         public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()
