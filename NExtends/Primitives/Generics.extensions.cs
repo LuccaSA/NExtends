@@ -13,7 +13,8 @@ namespace NExtends.Primitives
         /// Build a Dictionary 
         /// </summary>
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
-		{
+        {
+
 #if NETCOREAPP2_0
             return new Dictionary<TKey, TValue>(source);
 #else
@@ -22,34 +23,44 @@ namespace NExtends.Primitives
         }
 
         /// <summary>
-        /// Permet d'avoir les collections liées aux clés étrangères compatible entre le DBML et l'EDMX
+        /// Adds the elements of the specified collection to the end
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="elements"></param>
-        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
-		{
-			foreach (var element in elements)
+        public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> elements)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            foreach (T element in elements)
 			{
-				collection.Add(element);
+				source.Add(element);
 			}
-		}
+        }
 
-		/// <summary>
-		/// Pour supprimer plusieurs éléments d'un coup
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <param name="elements"></param>
-		public static void RemoveRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
-		{
-			foreach (var element in elements)
+        /// <summary>
+        /// Remove the elements of the specified collection
+        /// </summary>
+        public static void RemoveRange<T>(this ICollection<T> source, IEnumerable<T> elements)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            foreach (T element in elements)
 			{
-				collection.Remove(element);
+				source.Remove(element);
 			}
-		}
+        }
 
-		public enum SortOrder { Ascending, Descending };
+        /// <summary>
+        /// Adds the elements of the specified collection to the end
+        /// </summary>
+        public static void AddMany<T>(this ICollection<T> list, params T[] objs)
+        {
+            list.AddRange(objs);
+        }
+
+        public enum SortOrder { Ascending, Descending };
 
 		public static IOrderedEnumerable<T> OrderByEnum<T>(this IQueryable<T> query, Func<T, object> orderDelegate, SortOrder sortOrder)
 		{
@@ -63,16 +74,7 @@ namespace NExtends.Primitives
 			}
 		}
 
-		/// <summary>
-		/// Pour pouvoir ajouter plusieurs éléments d'un coup à une List (ex : a, b, c ...)
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <param name="objs"></param>
-		public static void AddMany<T>(this ICollection<T> list, params T[] objs)
-		{
-			list.AddRange(objs);
-		}
+
 
 		/// <summary>
 		/// Permet d'envoyer l'élément ET son indice dans un ForEach

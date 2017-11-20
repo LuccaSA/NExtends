@@ -41,7 +41,7 @@ namespace NExtends.Tests
                 { "y","value_y"},
                 { "z","value_z"}
             };
-            dic.UpdateKey("x","xx");
+            dic.UpdateKey("x", "xx");
             Assert.Equal("value_x", dic["xx"]);
             Assert.Throws<ArgumentException>(() =>
             {
@@ -55,6 +55,29 @@ namespace NExtends.Tests
             {
                 Dictionary<string, string> nulled = null;
                 nulled.UpdateKey("aaa", "bbbb");
+            });
+        }
+
+        [Fact]
+        public void CollectionTests()
+        {
+            ICollection<string> collection = new List<string>();
+            collection.AddMany("1");
+            collection.AddRange(new[] { "2", "3", "4", "5" });
+            collection.RemoveRange(new[] { "4", "5" });
+            Assert.Equal(3, collection.Count);
+            collection = null;
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                collection.AddMany("1"); 
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            { 
+                collection.AddRange(new[] { "1" }); 
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            { 
+                collection.RemoveRange(new[] { "1" });
             });
         }
 
