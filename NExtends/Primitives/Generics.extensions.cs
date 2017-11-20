@@ -118,9 +118,11 @@ namespace NExtends.Primitives
 			}
 		}
 
-		public static Dictionary<T, U> Concat<T, U>(this Dictionary<T, U> first, Dictionary<T, U> second)
-		{
-			return first.ToList().Concat(second.ToList()).ToDictionary(k => k.Key, k => k.Value);
+		public static Dictionary<TKey, TValue> Concat<TKey, TValue>(this Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
+        {
+            IEnumerable<KeyValuePair<TKey, TValue>> firstDictionary = first;
+            IEnumerable<KeyValuePair<TKey, TValue>> secondDictionary = second;
+            return firstDictionary.Concat(secondDictionary).ToDictionary(k => k.Key, k => k.Value);
 		}
 
 		/// <summary>
