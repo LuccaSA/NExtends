@@ -9,16 +9,12 @@ namespace NExtends.Primitives
 	public static class GenericExtensions
 	{
 		
-		/// <summary>
-		/// Pour reconstruire un Dictionnaire après avoir faire un .Where dessus
-		/// </summary>
-		/// <typeparam name="T1"></typeparam>
-		/// <typeparam name="T2"></typeparam>
-		/// <param name="ienum"></param>
-		/// <returns></returns>
-		public static Dictionary<T1, T2> ToDictionary<T1, T2>(this IEnumerable<KeyValuePair<T1, T2>> ienum)
+        /// <summary>
+        /// Build a Dictionary 
+        /// </summary>
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
 		{
-			return new Dictionary<T1, T2>(ienum);
+			return new Dictionary<TKey, TValue>(source);
 		}
 
 		/// <summary>
