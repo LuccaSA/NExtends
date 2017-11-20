@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using System.Globalization;
 
 namespace NExtends.Primitives
@@ -88,16 +87,6 @@ namespace NExtends.Primitives
 			return d_;
 		}
 
-		//Renvoie une date au format JSON, limite à 2099 pour les MaxValue
-		public static String ToJSONDate(this DateTime d)
-		{
-			return "new Date(" + Math.Min(d.Year, 2099) + ", " + (d.Month - 1) + ", " + d.Day + ")";
-		}
-		public static String ToJSONDateTime(this DateTime d)
-		{
-			return "new Date(" + Math.Min(d.Year, 2099) + ", " + (d.Month - 1) + ", " + d.Day + ", " + d.Hour + ", " + d.Minute + ", " + d.Second + ")";
-		}
-
 		public static String ToShortISO(this DateTime d)
 		{
 			return d.ToString("yyyy-MM-dd");
@@ -117,22 +106,6 @@ namespace NExtends.Primitives
 		public static String ToISOz(this DateTime d)
 		{
 			return d.ToString("o");
-		}
-
-		public static String ToJQuery(this DateTime d)
-		{
-			return JsonConvert.SerializeObject(d);
-		}
-
-		public static String ToJQuery(this DateTime? d)
-		{
-			return JsonConvert.SerializeObject(d);
-		}
-
-		[Obsolete("Use ToISO instead and parse the date on the client side")]
-		public static String ToJSON(this DateTime d)
-		{
-			return "new Date(" + Math.Min(d.Year, 2099) + ", " + (d.Month - 1) + ", " + d.Day + ", " + d.Hour + ", " + d.Minute + ", " + d.Second + ")";
 		}
 
 		public static int weekNumber(this DateTime d)
@@ -221,5 +194,5 @@ namespace NExtends.Primitives
 				return DateTime.MaxValue;
 			}
 		}
-	}
+    }
 }

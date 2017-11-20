@@ -29,12 +29,6 @@ namespace NExtends.Primitives
 			}
 		}
 
-		public static String ToJSON<T>(this IEnumerable<T> list)
-		{
-			return "[" + String.Join(",", list.Select(o => (string)o.GetType().GetMethod("ToJSON", new Type[] { }).Invoke(o, null)).ToArray()) + "]";
-		}
-
-
 		/// <summary>
 		/// Pour reconstruire un Dictionnaire après avoir faire un .Where dessus
 		/// </summary>
@@ -234,5 +228,5 @@ namespace NExtends.Primitives
 		{
 			return source == null || !source.Any();
 		}
-	}
+    }
 }
