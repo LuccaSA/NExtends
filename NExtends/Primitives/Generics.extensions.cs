@@ -38,7 +38,7 @@ namespace NExtends.Primitives
 		/// <returns></returns>
 		public static Dictionary<T1, T2> ToDictionary<T1, T2>(this IEnumerable<KeyValuePair<T1, T2>> ienum)
 		{
-			return ienum.ToDictionary(K => K.Key, K => K.Value);
+			return new Dictionary<T1, T2>(ienum);
 		}
 
 		/// <summary>
