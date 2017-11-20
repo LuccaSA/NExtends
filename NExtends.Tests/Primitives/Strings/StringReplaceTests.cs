@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using Xunit;
+#if !NETCOREAPP2_0
+using NExtends.Primitives.Strings;
+#endif
 
 namespace NExtends.Tests.Primitives.Strings
 {
@@ -13,7 +16,7 @@ namespace NExtends.Tests.Primitives.Strings
             var source = "The cat is in the kitchen";
             var expected = "@ cat is in the kitchen";
 
-            var result = NExtends.Primitives.Strings.StringExtensions.Replace(source, "The", "@", StringComparison.InvariantCulture);
+            var result = source.Replace("The", "@", StringComparison.InvariantCulture);
 
             Assert.Equal(expected, result);
         }
@@ -24,7 +27,7 @@ namespace NExtends.Tests.Primitives.Strings
             var source = "The cat is in the kitchen";
             var expected = "@ cat is in @ kitchen";
 
-            var result = NExtends.Primitives.Strings.StringExtensions.Replace(source, "THE", "@", StringComparison.InvariantCultureIgnoreCase);
+            var result = source.Replace("THE", "@", StringComparison.InvariantCultureIgnoreCase);
 
             Assert.Equal(expected, result);
         }
@@ -34,7 +37,7 @@ namespace NExtends.Tests.Primitives.Strings
             var sw = new Stopwatch();
             sw.Start();
 
-            var extensionResult = NExtends.Primitives.Strings.StringExtensions.Replace(source, oldValue, newValue, stringComparison);
+            var extensionResult = source.Replace(oldValue, newValue, stringComparison);
 
             sw.Stop();
 
@@ -80,7 +83,7 @@ namespace NExtends.Tests.Primitives.Strings
             var source = "<toto>My'Chain@domain.fr - and , \\e {value}</toto>";
             var expected = "<toto>My'Chain@domain.fr - and , \\e valueModified</toto>";
 
-            var result = NExtends.Primitives.Strings.StringExtensions.Replace(source, "{VALUE}", "valueModified", StringComparison.InvariantCultureIgnoreCase);
+            var result = source.Replace("{VALUE}", "valueModified", StringComparison.InvariantCultureIgnoreCase);
 
             Assert.Equal(expected, result);
         }

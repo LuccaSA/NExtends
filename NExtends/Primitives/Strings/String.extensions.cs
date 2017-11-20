@@ -461,33 +461,40 @@ namespace NExtends.Primitives.Strings
             return array.Select(s => s.ToLower()).ToArray();
         }
 
+#if !NETCOREAPP2_0
         /// <summary>
-        /// String replacement with case insensivity support
-        /// https://stackoverflow.com/questions/6275980/string-replace-ignoring-case
+        /// Replace String in net461
         /// </summary>
-        /// <param name="originalString"></param>
-        /// <param name="oldValue">The string to be replaced.</param>
-        /// <param name="newValue">The string to replace all occurrences of oldValue.</param>
-        /// <param name="comparisonType"></param>
-        /// <returns></returns>
         public static string Replace(this string originalString, string oldValue, string newValue, StringComparison comparisonType)
         {
-            var regexOptions = RegexOptions.IgnoreCase;
+            if (oldValue == null)
+                throw new ArgumentNullException("oldValue");
+            if (oldValue.Length == 0)
+                throw new ArgumentException("String cannot be of zero length.", "oldValue");
 
-            if (comparisonType == StringComparison.CurrentCulture
-                || comparisonType == StringComparison.InvariantCulture
-                || comparisonType == StringComparison.Ordinal)
+            StringBuilder sb = null;
+
+            int startIndex = 0;
+            int foundIndex = originalString.IndexOf(oldValue, comparisonType);
+            while (foundIndex != -1)
             {
-                regexOptions = RegexOptions.CultureInvariant;
+                if (sb == null)
+                    sb = new StringBuilder(originalString.Length + (newValue != null ? Math.Max(0, 5 * (newValue.Length - oldValue.Length)) : 0));
+                sb.Append(originalString, startIndex, foundIndex - startIndex);
+                sb.Append(newValue);
+
+                startIndex = foundIndex + oldValue.Length;
+                foundIndex = originalString.IndexOf(oldValue, startIndex, comparisonType);
             }
 
-            return Regex.Replace(
-                originalString,
-                Regex.Escape(oldValue),
-                newValue.Replace("$", "$$"),
-                regexOptions
-            );
+            if (startIndex == 0)
+                return originalString;
+#pragma warning disable S2259 
+            sb.Append(originalString, startIndex, originalString.Length - startIndex);
+#pragma warning restore S2259 
+            return sb.ToString();
         }
+#endif
 
         public static void AppendLineFormat(this StringBuilder sb, string format, params object[] args)
         {

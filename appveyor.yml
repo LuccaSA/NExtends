@@ -55,7 +55,8 @@ after_build:
 - ps: dotnet pack NExtends\NExtends.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
 
 test_script:
-- OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
+- C:\ProgramData\chocolatey\bin\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f netcoreapp2.0 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
+- C:\ProgramData\chocolatey\bin\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f net461 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -mergeoutput -output:coverage-opencover.xml
 - codecov -f coverage-opencover.xml
 
 artifacts:
