@@ -8,27 +8,7 @@ namespace NExtends.Primitives
 {
 	public static class GenericExtensions
 	{
-		/// <summary>
-		/// Ajout d'une méthode pour supprimer le premier élément d'une List
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static T Shift<T>(this List<T> list)
-		{
-			if (list.Count > 0)
-			{
-				var first = list[0];
-				list.RemoveAt(0);
-
-				return first;
-			}
-			else
-			{
-				return default(T);
-			}
-		}
-
+		
 		/// <summary>
 		/// Pour reconstruire un Dictionnaire après avoir faire un .Where dessus
 		/// </summary>
