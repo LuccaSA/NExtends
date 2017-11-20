@@ -97,18 +97,7 @@ namespace NExtends.Primitives
 		{
 			return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
 		}
-
-		/// <summary>
-		/// Evite de devoir mettre des .ToString() partout
-		/// </summary>
-		/// <param name="dic"></param>
-		/// <param name="enumKey"></param>
-		/// <returns></returns>
-		public static bool ContainsKey<T>(this Dictionary<string, T> dic, Enum enumKey)
-		{
-			return dic.ContainsKey(enumKey.ToString());
-		}
-
+        
 		/// <summary>
 		/// Permet d'ajouter une clé de type Enum sans devoir mettre un .ToString()
 		/// </summary>
