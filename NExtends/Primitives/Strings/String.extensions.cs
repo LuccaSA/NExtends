@@ -33,10 +33,7 @@ namespace NExtends.Primitives.Strings
         {
             return args != null ? string.Format(s, args) : s;
         }
-
-        //Validation des GUID qui arrivent en paramètre
-        static Regex isGuid = new Regex(@"^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$", RegexOptions.Compiled);
-
+         
         //Validation des numéro de sécu INSEE
         //version de gabsoftware
         //http://www.developpez.net/forums/d677820/php/langage/regex/verification-numero-securite-sociale/
@@ -46,11 +43,7 @@ namespace NExtends.Primitives.Strings
 
         static Regex isINSEENumber = new Regex(String.Format(@"^(({0})|({1})){2}$", REGULAR_INSEE_NUMBER, TEMPORARY_INSEE_NUMBER, KEY_INSEE_NUMBER), RegexOptions.Compiled);
 
-
-        public static bool IsGuid(string candidate)
-        {
-            return (!string.IsNullOrEmpty(candidate) && isGuid.IsMatch(candidate));
-        }
+        public static bool IsGuid(this string input) => Guid.TryParse(input, out Guid result);
 
         public static bool IsINSEENumber(this string input)
         {
