@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Expressions
 {
 	public static class ExpressionExtensions
 	{

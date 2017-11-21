@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.TimeSpans
 {
 	public static class TimeSpanExtensions
 	{

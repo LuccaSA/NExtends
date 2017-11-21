@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Exceptions
 {
 	public static class ExceptionExtensions
 	{

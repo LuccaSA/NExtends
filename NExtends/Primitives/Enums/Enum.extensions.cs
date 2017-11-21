@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Enums
 {
 	public static class EnumExtensions
 	{

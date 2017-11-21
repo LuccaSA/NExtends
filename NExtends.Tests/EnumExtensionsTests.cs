@@ -1,4 +1,4 @@
-﻿using NExtends.Primitives;
+﻿using NExtends.Primitives.Enums;
 using NExtends.Tests.Models;
 using Xunit;
 

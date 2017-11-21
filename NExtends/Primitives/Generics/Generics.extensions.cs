@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Generics
 {
 	public static class GenericExtensions
 	{
