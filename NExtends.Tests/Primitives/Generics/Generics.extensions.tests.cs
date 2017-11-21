@@ -237,5 +237,41 @@ namespace NExtends.Tests.Primitives.Generics
             public bool Equals(Tdata x, Tdata y) => x.Data == y.Data;
             public int GetHashCode(Tdata obj) => obj.Data.GetHashCode();
         }
+
+        [Fact]
+        public void UniqueOrDefault0()
+        {
+            Assert.Equal(0, new List<int>().UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefault1()
+        {
+            Assert.Equal(456, new List<int> { 456 }.UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefault2()
+        {
+            Assert.Equal(0, new List<int> { 456, 452 }.UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition0()
+        {
+            Assert.Equal(0, new List<int> { 455 }.UniqueOrDefault(e => e % 2 == 0));
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition1()
+        {
+            Assert.Equal(456, new List<int> { 456, 455 }.UniqueOrDefault(e => e % 2 == 0));
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition2()
+        {
+            Assert.Equal(0, new List<int> { 456, 455, 454 }.UniqueOrDefault(e => e % 2 == 0));
+        }
     }
 }
