@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NExtends.Primitives
 {
@@ -184,9 +185,7 @@ namespace NExtends.Primitives
 			return new HashSet<T>(collection);
 		}
 
-		public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
-		{
-			return source == null || !source.Any();
-		}
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) => source == null || !source.Any();
     }
 }

@@ -82,6 +82,19 @@ namespace NExtends.Tests
         }
 
         [Fact]
+        public void IsNullOrEmptyTest()
+        {
+            var full = new List<string> {""};
+            var empty = new List<string>();
+            List<string> nulled = null;
+
+            Assert.True(empty.IsNullOrEmpty());
+            Assert.True(nulled.IsNullOrEmpty());
+            Assert.False(full.IsNullOrEmpty());
+        }
+
+
+        [Fact]
         public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()
         {
             var t = new GenericTestsClassT() { Id = 1, Name = "T", CustomT = "CustomT", UnexpectedCommonName = "Common" };
