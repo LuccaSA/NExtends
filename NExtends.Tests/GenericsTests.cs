@@ -69,14 +69,14 @@ namespace NExtends.Tests
             collection = null;
             Assert.Throws<ArgumentNullException>(() =>
             {
-                collection.AddMany("1"); 
+                collection.AddMany("1");
             });
             Assert.Throws<ArgumentNullException>(() =>
-            { 
-                collection.AddRange(new[] { "1" }); 
+            {
+                collection.AddRange(new[] { "1" });
             });
             Assert.Throws<ArgumentNullException>(() =>
-            { 
+            {
                 collection.RemoveRange(new[] { "1" });
             });
         }
@@ -84,7 +84,7 @@ namespace NExtends.Tests
         [Fact]
         public void IsNullOrEmptyTest()
         {
-            var full = new List<string> {""};
+            var full = new List<string> { "" };
             var empty = new List<string>();
             List<string> nulled = null;
 
@@ -105,6 +105,43 @@ namespace NExtends.Tests
                 hashset = full.ToHashSet();
             });
         }
+
+
+        [Fact]
+        public void ContainsTest()
+        {
+            var x = new[] { "1", "2" };
+            var y = new[] { "2", "1" };
+            Assert.True(x.Contains(y));
+            Assert.True(y.Contains(x));
+            y = null;
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+            x = null;
+            Assert.True(x.Contains(y));
+            Assert.True(y.Contains(x));
+
+            x = new[] { "1", "2", "3" };
+            y = new[] { "2", "1" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1" };
+            y = new[] { "2", "1" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1" };
+            y = new[] { "2", "1", "2" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1", null };
+            y = new[] { "2", "1" , null, null};
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+        }
+
 
         [Fact]
         public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()

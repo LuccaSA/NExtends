@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,19 +133,68 @@ namespace NExtends.Primitives
             return firstDictionary.Concat(secondDictionary).ToDictionary(k => k.Key, k => k.Value);
 		}
 
-		/// <summary>
-		/// Pour savoir si une liste contient tous les éléments d'une autre liste => int, string, ..
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="first"></param>
-		/// <param name="second"></param>
-		/// <returns></returns>
-		public static bool Contains<T>(this IEnumerable<T> first, IEnumerable<T> second)
-		{
-			return second.All(el => first.Contains(el));
-		}
+        /// <summary>
+        /// Check if a IEnumerable contains all values present in the other, with the same number of occurences
+        /// </summary>
+        public static bool Contains<T>(this IEnumerable<T> first, IEnumerable<T> second)
+        {
+            ICollection<T> actual = first as ICollection<T> ?? first?.ToList();
+            ICollection<T> expected = second as ICollection<T> ?? second?.ToList();
+             
+            if (expected == null != (actual == null))
+            {
+                return false;
+            }
+            if (expected == actual)
+                return true;
+            if (expected.Count != actual.Count)
+            {
+                return false;
+            }
+            return expected.Count == 0 || !FindMismatchedElement(expected, actual);
+        }
 
-		public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
+        private static bool FindMismatchedElement<T>(ICollection<T> expected, ICollection<T> actual)
+        {
+            Dictionary<T, int> elementCounts = GetElementCounts(expected, out int num);
+            Dictionary<T, int> dictionary2 = GetElementCounts(actual, out int num2);
+            if (num2 != num)
+            { 
+                return true;
+            }
+            foreach (T obj2 in elementCounts.Keys)
+            {
+                elementCounts.TryGetValue(obj2, out int expectedCount);
+                dictionary2.TryGetValue(obj2, out int actualCount);
+                if (expectedCount != actualCount)
+                { 
+                    return true;
+                }
+            } 
+            return false;
+        }
+
+        private static Dictionary<T, int> GetElementCounts<T>(ICollection<T> collection, out int nullCount)
+        {
+            var dictionary = new Dictionary<T, int>();
+            nullCount = 0;
+            foreach (T obj2 in collection)
+            {
+                if (obj2 == null)
+                {
+                    nullCount++;
+                }
+                else
+                {
+                    dictionary.TryGetValue(obj2, out int num);
+                    num++;
+                    dictionary[obj2] = num;
+                }
+            }
+            return dictionary;
+        }
+
+        public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
 		{
 			return collection.Contains(target, StringComparer.OrdinalIgnoreCase);
 		}
