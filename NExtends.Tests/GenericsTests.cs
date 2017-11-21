@@ -93,6 +93,18 @@ namespace NExtends.Tests
             Assert.False(full.IsNullOrEmpty());
         }
 
+        [Fact]
+        public void ToHashSetTest()
+        {
+            var full = new List<string> { "" };
+            var hashset = full.ToHashSet();
+            Assert.NotEmpty(hashset);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                full = null;
+                hashset = full.ToHashSet();
+            });
+        }
 
         [Fact]
         public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()

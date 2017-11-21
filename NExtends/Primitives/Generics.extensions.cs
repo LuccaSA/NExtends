@@ -180,12 +180,12 @@ namespace NExtends.Primitives
 				yield return resultObject;
 			}
 		}
-		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> collection)
-		{
-			return new HashSet<T>(collection);
-		}
+
+#if NET461
+		public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> collection) => new HashSet<TSource>(collection);
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source) => source == null || !source.Any();
+        public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> source) => source == null || !source.Any();
     }
 }
