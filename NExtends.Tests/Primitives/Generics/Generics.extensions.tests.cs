@@ -1,6 +1,7 @@
 ﻿using NExtends.Primitives.Generics;
 using NExtends.Primitives.Types;
 using NExtends.Tests.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -9,6 +10,138 @@ namespace NExtends.Tests.Primitives.Generics
 {
     public class GenericsExtensionsTests
     {
+        [Fact]
+        public void ToDictionaryTest()
+        {
+            var dic = new Dictionary<string, string>
+            {
+                { "1","1"},
+                { "2","2"}
+            };
+
+            Dictionary<string, string> newDictionary = dic.Where(i => i.Key == "1").ToDictionary();
+
+            Assert.True(newDictionary.ContainsKey("1"));
+            Assert.Single(newDictionary);
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                IEnumerable<KeyValuePair<string, string>> nulled = null;
+                nulled.ToDictionary();
+            });
+            Assert.Empty(Enumerable.Empty<KeyValuePair<string, string>>().ToDictionary());
+        }
+
+        [Fact]
+        public void UpdateKeyTest()
+        {
+            var dic = new Dictionary<string, string>
+            {
+                { "x","value_x"},
+                { "y","value_y"},
+                { "z","value_z"}
+            };
+            dic.UpdateKey("x", "xx");
+            Assert.Equal("value_x", dic["xx"]);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                dic.UpdateKey("y", "z");
+            });
+            Assert.Throws<KeyNotFoundException>(() =>
+            {
+                dic.UpdateKey("aaa", "bbbb");
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                Dictionary<string, string> nulled = null;
+                nulled.UpdateKey("aaa", "bbbb");
+            });
+        }
+
+        [Fact]
+        public void CollectionTests()
+        {
+            ICollection<string> collection = new List<string>();
+            collection.AddMany("1");
+            collection.AddRange(new[] { "2", "3", "4", "5" });
+            collection.RemoveRange(new[] { "4", "5" });
+            Assert.Equal(3, collection.Count);
+            collection = null;
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                collection.AddMany("1");
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                collection.AddRange(new[] { "1" });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                collection.RemoveRange(new[] { "1" });
+            });
+        }
+
+        [Fact]
+        public void IsNullOrEmptyTest()
+        {
+            var full = new List<string> { "" };
+            var empty = new List<string>();
+            List<string> nulled = null;
+
+            Assert.True(empty.IsNullOrEmpty());
+            Assert.True(nulled.IsNullOrEmpty());
+            Assert.False(full.IsNullOrEmpty());
+        }
+
+        [Fact]
+        public void ToHashSetTest()
+        {
+            var full = new List<string> { "" };
+            var hashset = GenericExtensions.ToHashSet(full);
+            Assert.NotEmpty(hashset);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                full = null;
+                hashset = GenericExtensions.ToHashSet(full);
+            });
+        }
+
+        [Fact]
+        public void ContainsTest()
+        {
+            var x = new[] { "1", "2" };
+            var y = new[] { "2", "1" };
+            Assert.True(x.Contains(y));
+            Assert.True(y.Contains(x));
+            y = null;
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+            x = null;
+            Assert.True(x.Contains(y));
+            Assert.True(y.Contains(x));
+
+            x = new[] { "1", "2", "3" };
+            y = new[] { "2", "1" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1" };
+            y = new[] { "2", "1" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1" };
+            y = new[] { "2", "1", "2" };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+
+            x = new[] { "1", "2", "1", null };
+            y = new[] { "2", "1", null, null };
+            Assert.False(x.Contains(y));
+            Assert.False(y.Contains(x));
+        }
+
+
         [Fact]
         public void CastingCollectionOfClassToAnotherThroughtInterfaceShouldWork()
         {
