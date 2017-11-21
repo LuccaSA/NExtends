@@ -1,4 +1,6 @@
 ﻿using NExtends.Primitives.Strings;
+using System.Globalization;
+using System.Threading;
 using Xunit;
 
 namespace NExtends.Tests.Primitives.Strings
@@ -17,6 +19,27 @@ namespace NExtends.Tests.Primitives.Strings
         public void IsGuidTest(string testData, bool isGuid)
         {
             Assert.Equal(isGuid, testData.IsGuid());
+        }
+
+        [Fact]
+        public void TestToDouble()
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+            Assert.Equal(1234.567, "1234.567".ToDouble());
+            Assert.Equal(1234.567, "1234,567".ToDouble());
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+            Assert.Equal(1234.567, "1234.567".ToDouble());
+            Assert.Equal(1234.567, "1234,567".ToDouble());
+        }
+
+        [Fact]
+        public void ToFileNameProducesAdequatesName()
+        {
+            string input = null;
+            Assert.Null(input.ToFileName());
+            Assert.Equal("", "".ToFileName());
+            Assert.Equal("lOlé.3.4", "lOlé 3.4".ToFileName());
+            Assert.Equal("lOlé.3.4", @"<l?O%l/é\ *3:.>4|".ToFileName());
         }
     }
 }

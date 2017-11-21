@@ -5,7 +5,6 @@ namespace NExtends.Primitives.Doubles
 {
 	public static class DoubleExtensions
 	{
-	
 		/// <summary>
 		/// <para>Round number to given precision using mode MidpointRounding.ToEven</para>
 		/// <para>

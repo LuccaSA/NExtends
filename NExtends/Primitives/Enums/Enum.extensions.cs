@@ -106,10 +106,10 @@ namespace NExtends.Primitives.Enums
 
 			var member = members[0];
 			var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
-			if (attributes.Count() == 0)
+			if (!attributes.Any())
 				return null;
 
-			return (DisplayAttribute)attributes.ElementAt(0);
+            return (DisplayAttribute)attributes[0];
 		}
 
 		/// <summary>
