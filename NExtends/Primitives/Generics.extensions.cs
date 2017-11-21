@@ -1,75 +1,68 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NExtends.Primitives
 {
 	public static class GenericExtensions
 	{
-		/// <summary>
-		/// Ajout d'une méthode pour supprimer le premier élément d'une List
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static T Shift<T>(this List<T> list)
-		{
-			if (list.Count > 0)
+		
+        /// <summary>
+        /// Build a Dictionary 
+        /// </summary>
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
+        {
+
+#if NETCOREAPP2_0
+            return new Dictionary<TKey, TValue>(source);
+#else
+            return source.ToDictionary(item => item.Key, item => item.Value);
+#endif
+        }
+
+        /// <summary>
+        /// Adds the elements of the specified collection to the end
+        /// </summary>
+        public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> elements)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            foreach (T element in elements)
 			{
-				var first = list[0];
-				list.RemoveAt(0);
-
-				return first;
+				source.Add(element);
 			}
-			else
+        }
+
+        /// <summary>
+        /// Remove the elements of the specified collection
+        /// </summary>
+        public static void RemoveRange<T>(this ICollection<T> source, IEnumerable<T> elements)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            foreach (T element in elements)
 			{
-				return default(T);
+				source.Remove(element);
 			}
-		}
+        }
 
-		/// <summary>
-		/// Pour reconstruire un Dictionnaire après avoir faire un .Where dessus
-		/// </summary>
-		/// <typeparam name="T1"></typeparam>
-		/// <typeparam name="T2"></typeparam>
-		/// <param name="ienum"></param>
-		/// <returns></returns>
-		public static Dictionary<T1, T2> ToDictionary<T1, T2>(this IEnumerable<KeyValuePair<T1, T2>> ienum)
-		{
-			return ienum.ToDictionary(K => K.Key, K => K.Value);
-		}
+        /// <summary>
+        /// Adds the elements of the specified collection to the end
+        /// </summary>
+        public static void AddMany<T>(this ICollection<T> list, params T[] objs)
+        {
+            list.AddRange(objs);
+        }
 
-		/// <summary>
-		/// Permet d'avoir les collections liées aux clés étrangères compatible entre le DBML et l'EDMX
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <param name="elements"></param>
-		public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
-		{
-			foreach (var element in elements)
-			{
-				collection.Add(element);
-			}
-		}
-
-		/// <summary>
-		/// Pour supprimer plusieurs éléments d'un coup
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
-		/// <param name="elements"></param>
-		public static void RemoveRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
-		{
-			foreach (var element in elements)
-			{
-				collection.Remove(element);
-			}
-		}
-
-		public enum SortOrder { Ascending, Descending };
+        public enum SortOrder { Ascending, Descending };
 
 		public static IOrderedEnumerable<T> OrderByEnum<T>(this IQueryable<T> query, Func<T, object> orderDelegate, SortOrder sortOrder)
 		{
@@ -83,16 +76,7 @@ namespace NExtends.Primitives
 			}
 		}
 
-		/// <summary>
-		/// Pour pouvoir ajouter plusieurs éléments d'un coup à une List (ex : a, b, c ...)
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <param name="objs"></param>
-		public static void AddMany<T>(this ICollection<T> list, params T[] objs)
-		{
-			list.AddRange(objs);
-		}
+
 
 		/// <summary>
 		/// Permet d'envoyer l'élément ET son indice dans un ForEach
@@ -117,73 +101,100 @@ namespace NExtends.Primitives
 		{
 			return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
 		}
-
+        
 		/// <summary>
-		/// Evite de devoir mettre des .ToString() partout
+		/// Swap specifi key
 		/// </summary>
-		/// <param name="dic"></param>
-		/// <param name="enumKey"></param>
-		/// <returns></returns>
-		public static bool ContainsKey<T>(this Dictionary<string, T> dic, Enum enumKey)
+		public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey oldKey, TKey newKey)
 		{
-			return dic.ContainsKey(enumKey.ToString());
-		}
-
-		/// <summary>
-		/// Permet d'ajouter une clé de type Enum sans devoir mettre un .ToString()
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dic"></param>
-		/// <param name="enumValue"></param>
-		/// <returns></returns>
-		public static void Add<T>(this Dictionary<string, T> dic, Enum enumKey, T value)
-		{
-			dic.Add(enumKey.ToString(), value);
-		}
-
-		/// <summary>
-		/// Permet de renommer une clé
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dict"></param>
-		/// <param name="oldKey"></param>
-		/// <param name="newKey"></param>
-		public static void UpdateKey<T>(this Dictionary<string, T> dict, string oldKey, string newKey)
-		{
-			T value;
-			if (dict.TryGetValue(newKey, out value))
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            if (source.TryGetValue(newKey, out TValue value))
 			{
-				throw new Exception("The new key is already present in the dictionary");
+				throw new ArgumentException("The new key is already present in the dictionary");
 			}
-			if (dict.TryGetValue(oldKey, out value))
+			if (source.TryGetValue(oldKey, out value))
 			{
-				dict.Remove(oldKey);
-				dict.Add(newKey, value);
+				source.Remove(oldKey);
+				source.Add(newKey, value);
 			}
 			else
 			{
-				throw new Exception("The key '" + oldKey + "' does not exist in the dictionary");
+				throw new KeyNotFoundException("The key '" + oldKey + "' does not exist in the dictionary");
 			}
 		}
 
-		public static Dictionary<T, U> Concat<T, U>(this Dictionary<T, U> first, Dictionary<T, U> second)
-		{
-			return first.ToList().Concat(second.ToList()).ToDictionary(k => k.Key, k => k.Value);
+		public static Dictionary<TKey, TValue> Concat<TKey, TValue>(this Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
+        {
+            IEnumerable<KeyValuePair<TKey, TValue>> firstDictionary = first;
+            IEnumerable<KeyValuePair<TKey, TValue>> secondDictionary = second;
+            return firstDictionary.Concat(secondDictionary).ToDictionary(k => k.Key, k => k.Value);
 		}
 
-		/// <summary>
-		/// Pour savoir si une liste contient tous les éléments d'une autre liste => int, string, ..
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="first"></param>
-		/// <param name="second"></param>
-		/// <returns></returns>
-		public static bool Contains<T>(this IEnumerable<T> first, IEnumerable<T> second)
-		{
-			return second.All(el => first.Contains(el));
-		}
+        /// <summary>
+        /// Check if a IEnumerable contains all values present in the other, with the same number of occurences
+        /// </summary>
+        public static bool Contains<T>(this IEnumerable<T> first, IEnumerable<T> second)
+        {
+            ICollection<T> actual = first as ICollection<T> ?? first?.ToList();
+            ICollection<T> expected = second as ICollection<T> ?? second?.ToList();
+             
+            if (expected == null != (actual == null))
+            {
+                return false;
+            }
+            if (expected == actual)
+                return true;
+            if (expected.Count != actual.Count)
+            {
+                return false;
+            }
+            return expected.Count == 0 || !FindMismatchedElement(expected, actual);
+        }
 
-		public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
+        private static bool FindMismatchedElement<T>(ICollection<T> expected, ICollection<T> actual)
+        {
+            Dictionary<T, int> elementCounts = GetElementCounts(expected, out int num);
+            Dictionary<T, int> dictionary2 = GetElementCounts(actual, out int num2);
+            if (num2 != num)
+            { 
+                return true;
+            }
+            foreach (T obj2 in elementCounts.Keys)
+            {
+                elementCounts.TryGetValue(obj2, out int expectedCount);
+                dictionary2.TryGetValue(obj2, out int actualCount);
+                if (expectedCount != actualCount)
+                { 
+                    return true;
+                }
+            } 
+            return false;
+        }
+
+        private static Dictionary<T, int> GetElementCounts<T>(ICollection<T> collection, out int nullCount)
+        {
+            var dictionary = new Dictionary<T, int>();
+            nullCount = 0;
+            foreach (T obj2 in collection)
+            {
+                if (obj2 == null)
+                {
+                    nullCount++;
+                }
+                else
+                {
+                    dictionary.TryGetValue(obj2, out int num);
+                    num++;
+                    dictionary[obj2] = num;
+                }
+            }
+            return dictionary;
+        }
+
+        public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
 		{
 			return collection.Contains(target, StringComparer.OrdinalIgnoreCase);
 		}
@@ -219,14 +230,12 @@ namespace NExtends.Primitives
 				yield return resultObject;
 			}
 		}
-		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> collection)
-		{
-			return new HashSet<T>(collection);
-		}
 
-		public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
-		{
-			return source == null || !source.Any();
-		}
+#if NET461
+		public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> collection) => new HashSet<TSource>(collection);
+#endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> source) => source == null || !source.Any();
     }
 }
