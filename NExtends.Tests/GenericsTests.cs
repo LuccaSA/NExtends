@@ -97,16 +97,15 @@ namespace NExtends.Tests
         public void ToHashSetTest()
         {
             var full = new List<string> { "" };
-            var hashset = full.ToHashSet();
+            var hashset = GenericExtensions.ToHashSet(full);
             Assert.NotEmpty(hashset);
             Assert.Throws<ArgumentNullException>(() =>
             {
                 full = null;
-                hashset = full.ToHashSet();
+                hashset = GenericExtensions.ToHashSet(full);
             });
         }
-
-
+        
         [Fact]
         public void ContainsTest()
         {

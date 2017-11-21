@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace NExtends.Primitives
 {
 	public static class GenericExtensions
 	{
-		
         /// <summary>
         /// Build a Dictionary 
         /// </summary>
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
         {
-
-#if NETCOREAPP2_0
-            return new Dictionary<TKey, TValue>(source);
-#else
             return source.ToDictionary(item => item.Key, item => item.Value);
-#endif
         }
 
         /// <summary>
@@ -230,10 +222,8 @@ namespace NExtends.Primitives
 				yield return resultObject;
 			}
 		}
-
-#if NET461
+        
 		public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> collection) => new HashSet<TSource>(collection);
-#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> source) => source == null || !source.Any();
