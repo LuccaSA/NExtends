@@ -69,8 +69,6 @@ namespace NExtends.Primitives.Generics
 			}
 		}
 
-
-
 		/// <summary>
 		/// Permet d'envoyer l'élément ET son indice dans un ForEach
 		/// </summary>
@@ -133,60 +131,10 @@ namespace NExtends.Primitives.Generics
         {
             ICollection<T> actual = first as ICollection<T> ?? first?.ToList();
             ICollection<T> expected = second as ICollection<T> ?? second?.ToList();
-             
-            if (expected == null != (actual == null))
-            {
-                return false;
-            }
-            if (expected == actual)
-                return true;
-            if (expected.Count != actual.Count)
-            {
-                return false;
-            }
-            return expected.Count == 0 || !FindMismatchedElement(expected, actual);
-        }
 
-        private static bool FindMismatchedElement<T>(ICollection<T> expected, ICollection<T> actual)
-        {
-            Dictionary<T, int> elementCounts = GetElementCounts(expected, out int num);
-            Dictionary<T, int> dictionary2 = GetElementCounts(actual, out int num2);
-            if (num2 != num)
-            { 
-                return true;
-            }
-            foreach (T obj2 in elementCounts.Keys)
-            {
-                elementCounts.TryGetValue(obj2, out int expectedCount);
-                dictionary2.TryGetValue(obj2, out int actualCount);
-                if (expectedCount != actualCount)
-                { 
-                    return true;
-                }
-            } 
-            return false;
+            return actual.IsEquivalentTo(expected);
         }
-
-        private static Dictionary<T, int> GetElementCounts<T>(ICollection<T> collection, out int nullCount)
-        {
-            var dictionary = new Dictionary<T, int>();
-            nullCount = 0;
-            foreach (T obj2 in collection)
-            {
-                if (obj2 == null)
-                {
-                    nullCount++;
-                }
-                else
-                {
-                    dictionary.TryGetValue(obj2, out int num);
-                    num++;
-                    dictionary[obj2] = num;
-                }
-            }
-            return dictionary;
-        }
-
+          
         public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
 		{
 			return collection.Contains(target, StringComparer.OrdinalIgnoreCase);
