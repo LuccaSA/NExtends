@@ -156,7 +156,7 @@ namespace NExtends.Primitives.DateTimes
 			var timeSpan = firstDate - secondDate;
             if (timeSpan < System.TimeSpan.Zero)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("secondDate should be lower than the current DateTime");
             }
             var yearResult = (zeroTime + timeSpan).Year - 1; // because we start at year 1 for the Gregorian calendar, we must subtract a year here.
 			// Il peut y avoir des cas à la con : 31/05/2014-01/06/1995 donne 19 ans alors qu'il nous faut 18 ans ! (probablement dû aux années bisextiles)

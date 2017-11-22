@@ -264,7 +264,7 @@ namespace NExtends.Tests.Primitives.DateTimes
         {
             // On test avec deux dates identiques
             var date = new DateTime(2014, 5, 31);
-            Assert.Equal(date.GetDifferenceInFullYearsWith(date), 0);
+            Assert.Equal(0, date.GetDifferenceInFullYearsWith(date));
         }
 
         [Fact]
