@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.DateTimes
 {
 	public static class DateTimeExtensions
 	{
@@ -77,14 +77,14 @@ namespace NExtends.Primitives
 		public static DateTime NextOrCurrent(this DateTime d, DayOfWeek day) { return LookFor(d, day, 1); }
 		static DateTime LookFor(DateTime start, DayOfWeek day, int step)
 		{
-			if (step % 7 == 0) throw new Exception("Boucle infinie");
+			if (step % 7 == 0) throw new ArgumentException("Step should be less than 7");
 
-			var d_ = start.Date;
-			while (d_.DayOfWeek != day)
+			var d = start.Date;
+			while (d.DayOfWeek != day)
 			{
-				d_ = d_.AddDays(step);
+				d = d.AddDays(step);
 			}
-			return d_;
+			return d;
 		}
 
 		public static String ToShortISO(this DateTime d)
@@ -154,7 +154,11 @@ namespace NExtends.Primitives
 			DateTime zeroTime = new DateTime(1, 1, 1);
 
 			var timeSpan = firstDate - secondDate;
-			var yearResult = (zeroTime + timeSpan).Year - 1; // because we start at year 1 for the Gregorian calendar, we must subtract a year here.
+            if (timeSpan < System.TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(secondDate), "secondDate should be lower than the current DateTime");
+            }
+            var yearResult = (zeroTime + timeSpan).Year - 1; // because we start at year 1 for the Gregorian calendar, we must subtract a year here.
 			// Il peut y avoir des cas à la con : 31/05/2014-01/06/1995 donne 19 ans alors qu'il nous faut 18 ans ! (probablement dû aux années bisextiles)
 
 			if (firstDate.AddYears(-yearResult) < secondDate)
@@ -194,5 +198,98 @@ namespace NExtends.Primitives
 				return DateTime.MaxValue;
 			}
 		}
+
+        public static string GetDayOrdinalSuffix(this DateTime date, CultureInfo culture)
+        {
+            switch (culture.LCID)
+            {
+                case 1033:
+                case 2057:
+                    return GetEnglishDayOrdinalSuffix(date);
+                case 1036:
+                    return GetFrenchDayOrdinalSuffix(date);
+                case 1031:
+                    return GetGermanDayOrdinalSuffix();
+                case 2067:
+                    return GetDutchDayOrdinalSuffix();
+                default:
+                    return "";
+            }
+        }
+
+        public static DateTime GetLastSundayOfYearISO8601(int year)
+        {
+            var lastDayOfYear = new DateTime(year, 12, 31);
+            if (lastDayOfYear.DayOfWeek == DayOfWeek.Sunday)
+                return lastDayOfYear;
+
+            var gapDaysNumberToSunday = (lastDayOfYear.DayOfWeek >= DayOfWeek.Thursday ? 7 - (int)lastDayOfYear.DayOfWeek : -(int)lastDayOfYear.DayOfWeek);
+            return lastDayOfYear.AddDays(gapDaysNumberToSunday);
+        }
+
+        public static DateTime GetStartOfWeek(this DateTime value)
+        {
+            var date = value.Date;
+            //DayOfWeek starts on Sunday but we want weeks starting on monday
+            int daysIntoWeek = (int)date.DayOfWeek == 0 ? 6 : (int)date.DayOfWeek - 1;
+            return date.AddDays(-daysIntoWeek);
+        }
+
+        public static string ToUserCultureFormat(this DateTime date)
+        {
+            return date.ToString(System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern);
+        }
+
+        // http://stackoverflow.com/a/20175
+        private static string GetEnglishDayOrdinalSuffix(DateTime date)
+        {
+            switch (date.Day % 100)
+            {
+                case 11:
+                case 12:
+                case 13:
+                    return "th";
+            }
+
+            switch (date.Day % 10)
+            {
+                case 1:
+                    return "st";
+                case 2:
+                    return "nd";
+                case 3:
+                    return "rd";
+                default:
+                    return "th";
+            }
+        }
+
+        private static string GetFrenchDayOrdinalSuffix(DateTime date)
+        {
+            if (date.Day == 1)
+            {
+                return "er";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private static string GetGermanDayOrdinalSuffix()
+        {
+            return ".";
+        }
+
+        private static string GetDutchDayOrdinalSuffix()
+        {
+            return "";
+        }
+
+        public static DateTime TrimMilliseconds(this DateTime dt)
+        {
+            // Source: http://stackoverflow.com/a/11558076
+            return dt.AddTicks(-dt.Ticks % TimeSpan.TicksPerSecond);
+        }
     }
 }

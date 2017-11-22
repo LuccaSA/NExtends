@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
-namespace NExtends.Primitives
+namespace NExtends.Primitives.Enums
 {
 	public static class EnumExtensions
 	{
@@ -83,7 +83,7 @@ namespace NExtends.Primitives
 			var memInfo = type.GetMember(enumVal.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
 
-			if (attributes.Count() > 0)
+			if (attributes.Any())
 			{
 				return (T)attributes.ElementAt(0);
 			}
@@ -106,10 +106,10 @@ namespace NExtends.Primitives
 
 			var member = members[0];
 			var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
-			if (attributes.Count() == 0)
+			if (!attributes.Any())
 				return null;
 
-			return (DisplayAttribute)attributes.ElementAt(0);
+            return (DisplayAttribute)attributes[0];
 		}
 
 		/// <summary>
@@ -169,7 +169,6 @@ namespace NExtends.Primitives
 				}
 			}
 			throw new ArgumentException("Not found.", "description");
-			// or return default(T);
 		}
 
 		public static string GetDescriptionFromValue<T>(T value)

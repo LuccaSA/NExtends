@@ -1,14 +1,14 @@
+﻿using NExtends.Primitives.Generics;
+using NExtends.Primitives.Types;
+using NExtends.Tests.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NExtends.Tests.Models;
-using NExtends.Primitives;
-using NExtends.Primitives.Types;
 using Xunit;
 
-namespace NExtends.Tests
+namespace NExtends.Tests.Primitives.Generics
 {
-    public class GenericsTests
+    public class GenericsExtensionsTests
     {
         [Fact]
         public void ToDictionaryTest()
@@ -105,7 +105,7 @@ namespace NExtends.Tests
                 hashset = GenericExtensions.ToHashSet(full);
             });
         }
-        
+
         [Fact]
         public void ContainsTest()
         {
@@ -136,7 +136,7 @@ namespace NExtends.Tests
             Assert.False(y.Contains(x));
 
             x = new[] { "1", "2", "1", null };
-            y = new[] { "2", "1" , null, null};
+            y = new[] { "2", "1", null, null };
             Assert.False(x.Contains(y));
             Assert.False(y.Contains(x));
         }
@@ -149,7 +149,7 @@ namespace NExtends.Tests
 
             var collection = new HashSet<GenericTestsClassT>() { t };
 
-            var result = collection.Cast<GenericTestsClassT, GenericTestsClassU, GenericTestsInterfaceI>().SingleOrDefault();
+            var result = collection.Cast<GenericTestsClassT, GenericTestsClassU>(typeof(GenericTestsInterfaceI)).SingleOrDefault();
 
             Assert.NotNull(result);
             Assert.Equal(1, result.Id);
@@ -170,6 +170,108 @@ namespace NExtends.Tests
             Assert.Equal("T", result.Name);
             Assert.Null(result.CustomU);
             Assert.Null(result.UnexpectedCommonName);
+        }
+
+        [Theory]
+        [MemberData(nameof(EquivalenceStructData))]
+        public void TestEquivalentStruct(int[] source, int[] other, bool expected)
+        {
+            Assert.Equal(source.IsEquivalentTo(other), expected);
+        }
+
+        [Theory]
+        [MemberData(nameof(EquivalenceClassData))]
+        public void TestEquivalentClass(Tdata[] source, Tdata[] other, bool expected)
+        {
+            Assert.Equal(source.IsEquivalentTo(other, new TestDataEqualityComparer()), expected);
+        }
+
+        public static TheoryData EquivalenceStructData()
+        {
+            var theory = new TheoryData<int[], int[], bool>();
+            foreach (var data in Generate())
+            {
+                theory.Add(data.source, data.other, data.expected);
+            }
+            return theory;
+        }
+
+        public static TheoryData EquivalenceClassData()
+        {
+            var theory = new TheoryData<Tdata[], Tdata[], bool>();
+            foreach (var data in Generate())
+            {
+                theory.Add(
+                    data.source.Select(i => new Tdata(i)).ToArray(),
+                    data.other.Select(i => new Tdata(i)).ToArray(),
+                    data.expected);
+            }
+            return theory;
+        }
+
+        private static IEnumerable<(int[] source, int[] other, bool expected)> Generate()
+            => new[]
+            {
+                (new[] {1}, new[] {1}, true),
+                (new[] {1, 2, 3}, new[] {1, 2, 3}, true),
+                (new[] {1, 3, 2}, new[] {2, 3, 1}, true),
+                (new[] {1, 1, 1, 4}, new[] {1, 1, 1, 4}, true),
+                (new[] {1, 1, 1, 4}, new[] {1, 4, 1, 1}, true),
+                (new[] {1, 1, 3}, new[] {1, 3, 3}, false),
+                (new[] {1}, new[] {1, 1}, false),
+                (new int[] { }, new[] {1}, false),
+                (new int[] { }, new int[] { }, true)
+            };
+
+        public class Tdata
+        {
+            public Tdata(int data)
+            {
+                Data = data;
+            }
+            public int Data { get; }
+        }
+
+        private class TestDataEqualityComparer : IEqualityComparer<Tdata>
+        {
+            public bool Equals(Tdata x, Tdata y) => x.Data == y.Data;
+            public int GetHashCode(Tdata obj) => obj.Data.GetHashCode();
+        }
+
+        [Fact]
+        public void UniqueOrDefault0()
+        {
+            Assert.Equal(0, new List<int>().UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefault1()
+        {
+            Assert.Equal(456, new List<int> { 456 }.UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefault2()
+        {
+            Assert.Equal(0, new List<int> { 456, 452 }.UniqueOrDefault());
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition0()
+        {
+            Assert.Equal(0, new List<int> { 455 }.UniqueOrDefault(e => e % 2 == 0));
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition1()
+        {
+            Assert.Equal(456, new List<int> { 456, 455 }.UniqueOrDefault(e => e % 2 == 0));
+        }
+
+        [Fact]
+        public void UniqueOrDefaultWithCondition2()
+        {
+            Assert.Equal(0, new List<int> { 456, 455, 454 }.UniqueOrDefault(e => e % 2 == 0));
         }
     }
 }
