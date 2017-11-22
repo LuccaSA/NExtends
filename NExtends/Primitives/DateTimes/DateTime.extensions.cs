@@ -77,7 +77,7 @@ namespace NExtends.Primitives.DateTimes
 		public static DateTime NextOrCurrent(this DateTime d, DayOfWeek day) { return LookFor(d, day, 1); }
 		static DateTime LookFor(DateTime start, DayOfWeek day, int step)
 		{
-			if (step % 7 == 0) throw new Exception("Infinite loop");
+			if (step % 7 == 0) throw new ArgumentException("Step should be less than 7");
 
 			var d = start.Date;
 			while (d.DayOfWeek != day)
@@ -209,9 +209,9 @@ namespace NExtends.Primitives.DateTimes
                 case 1036:
                     return GetFrenchDayOrdinalSuffix(date);
                 case 1031:
-                    return GetGermanDayOrdinalSuffix(date);
+                    return GetGermanDayOrdinalSuffix();
                 case 2067:
-                    return GetDutchDayOrdinalSuffix(date);
+                    return GetDutchDayOrdinalSuffix();
                 default:
                     return "";
             }
@@ -276,12 +276,12 @@ namespace NExtends.Primitives.DateTimes
             }
         }
 
-        private static string GetGermanDayOrdinalSuffix(DateTime date)
+        private static string GetGermanDayOrdinalSuffix()
         {
             return ".";
         }
 
-        private static string GetDutchDayOrdinalSuffix(DateTime date)
+        private static string GetDutchDayOrdinalSuffix()
         {
             return "";
         }

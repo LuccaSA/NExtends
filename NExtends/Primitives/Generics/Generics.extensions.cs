@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NExtends.Primitives.Types;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -196,17 +197,26 @@ namespace NExtends.Primitives.Generics
 			dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
 		}
 
-		public static IEnumerable<TResult> Cast<TSource, TResult, ICommonInterface>(this IEnumerable<TSource> collection)
-			where TSource : class, ICommonInterface
-			where TResult : class, ICommonInterface, new()
+		public static IEnumerable<TResult> Cast<TSource, TResult>(this IEnumerable<TSource> collection, Type commonInterface)
+			where TSource : class
+			where TResult : class, new()
 		{
-			var sourceProps = (from prop in typeof(TSource).GetProperties() select prop).ToList();
+            if (!typeof(TSource).IsSubclassOfInterface(commonInterface))
+            {
+                throw new ArgumentException($"TSource should implement {commonInterface}");
+            }
+            if (!typeof(TResult).IsSubclassOfInterface(commonInterface))
+            {
+                throw new ArgumentException($"TSource should implement {commonInterface}");
+            }
+
+            var sourceProps = (from prop in typeof(TSource).GetProperties() select prop).ToList();
 			var resultProps = (from prop in typeof(TResult).GetProperties() select prop).ToList();
-			var properties = (from prop in typeof(ICommonInterface).GetProperties()
+			var properties = (from prop in commonInterface.GetProperties()
 							 select new
 							 {
-								 source = sourceProps.Where(p => p.Name == prop.Name).FirstOrDefault(),
-								 result = resultProps.Where(p => p.Name == prop.Name).FirstOrDefault()
+								 source = sourceProps.FirstOrDefault(p => p.Name == prop.Name),
+								 result = resultProps.FirstOrDefault(p => p.Name == prop.Name)
 							 })
 							 .ToList();
 

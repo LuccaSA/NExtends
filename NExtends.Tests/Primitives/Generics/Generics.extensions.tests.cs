@@ -149,7 +149,7 @@ namespace NExtends.Tests.Primitives.Generics
 
             var collection = new HashSet<GenericTestsClassT>() { t };
 
-            var result = collection.Cast<GenericTestsClassT, GenericTestsClassU, GenericTestsInterfaceI>().SingleOrDefault();
+            var result = collection.Cast<GenericTestsClassT, GenericTestsClassU>(typeof(GenericTestsInterfaceI)).SingleOrDefault();
 
             Assert.NotNull(result);
             Assert.Equal(1, result.Id);

@@ -83,7 +83,7 @@ namespace NExtends.Primitives.Enums
 			var memInfo = type.GetMember(enumVal.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
 
-			if (attributes.Count() > 0)
+			if (attributes.Any())
 			{
 				return (T)attributes.ElementAt(0);
 			}
@@ -169,7 +169,6 @@ namespace NExtends.Primitives.Enums
 				}
 			}
 			throw new ArgumentException("Not found.", "description");
-			// or return default(T);
 		}
 
 		public static string GetDescriptionFromValue<T>(T value)
