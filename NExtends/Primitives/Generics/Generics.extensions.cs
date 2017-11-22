@@ -7,8 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace NExtends.Primitives.Generics
 {
-	public static class GenericExtensions
-	{
+    public static class GenericExtensions
+    {
         /// <summary>
         /// Build a Dictionary 
         /// </summary>
@@ -27,9 +27,9 @@ namespace NExtends.Primitives.Generics
                 throw new ArgumentNullException(nameof(source));
             }
             foreach (T element in elements)
-			{
-				source.Add(element);
-			}
+            {
+                source.Add(element);
+            }
         }
 
         /// <summary>
@@ -42,9 +42,9 @@ namespace NExtends.Primitives.Generics
                 throw new ArgumentNullException(nameof(source));
             }
             foreach (T element in elements)
-			{
-				source.Remove(element);
-			}
+            {
+                source.Remove(element);
+            }
         }
 
         /// <summary>
@@ -57,72 +57,72 @@ namespace NExtends.Primitives.Generics
 
         public enum SortOrder { Ascending, Descending };
 
-		public static IOrderedEnumerable<T> OrderByEnum<T>(this IQueryable<T> query, Func<T, object> orderDelegate, SortOrder sortOrder)
-		{
-			if (sortOrder == SortOrder.Ascending)
-			{
-				return query.OrderBy(orderDelegate);
-			}
-			else
-			{
-				return query.OrderByDescending(orderDelegate);
-			}
-		}
+        public static IOrderedEnumerable<T> OrderByEnum<T>(this IQueryable<T> query, Func<T, object> orderDelegate, SortOrder sortOrder)
+        {
+            if (sortOrder == SortOrder.Ascending)
+            {
+                return query.OrderBy(orderDelegate);
+            }
+            else
+            {
+                return query.OrderByDescending(orderDelegate);
+            }
+        }
 
-		/// <summary>
-		/// Permet d'envoyer l'élément ET son indice dans un ForEach
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		/// <param name="action"></param>
-		public static void ForEach<T>(this List<T> list, Action<T, int> action)
-		{
-			for (int i = 0; i < list.Count; i++)
-			{
-				action(list[i], i);
-			}
-		}
+        /// <summary>
+        /// Permet d'envoyer l'élément ET son indice dans un ForEach
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="action"></param>
+        public static void ForEach<T>(this List<T> list, Action<T, int> action)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                action(list[i], i);
+            }
+        }
 
-		/// <summary>
-		/// Permet de transformer une List de string du type "user.id,user.name" en Dictionary du type (user, (id, name)), ...
-		/// </summary>
-		/// <param name="list"></param>
-		/// <returns></returns>
-		public static Dictionary<string, List<string>> ToLowerDotDictionary(this List<string> list)
-		{
-			return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
-		}
+        /// <summary>
+        /// Permet de transformer une List de string du type "user.id,user.name" en Dictionary du type (user, (id, name)), ...
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static Dictionary<string, List<string>> ToLowerDotDictionary(this List<string> list)
+        {
+            return list.Where(el => !String.IsNullOrEmpty(el)).Select(el => el.ToLower()).GroupBy(el => el.Split('.')[0]).ToDictionary(g => g.Key, g => g.All(s => s.Contains('.')) ? g.Select(s => String.Join(".", s.Split('.').Skip(1).ToArray())).ToList() : (List<string>)null, StringComparer.OrdinalIgnoreCase);
+        }
         
-		/// <summary>
-		/// Swap specifi key
-		/// </summary>
-		public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey oldKey, TKey newKey)
-		{
+        /// <summary>
+        /// Swap specifi key
+        /// </summary>
+        public static void UpdateKey<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey oldKey, TKey newKey)
+        {
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
             }
             if (source.TryGetValue(newKey, out TValue value))
-			{
-				throw new ArgumentException("The new key is already present in the dictionary");
-			}
-			if (source.TryGetValue(oldKey, out value))
-			{
-				source.Remove(oldKey);
-				source.Add(newKey, value);
-			}
-			else
-			{
-				throw new KeyNotFoundException("The key '" + oldKey + "' does not exist in the dictionary");
-			}
-		}
+            {
+                throw new ArgumentException("The new key is already present in the dictionary");
+            }
+            if (source.TryGetValue(oldKey, out value))
+            {
+                source.Remove(oldKey);
+                source.Add(newKey, value);
+            }
+            else
+            {
+                throw new KeyNotFoundException("The key '" + oldKey + "' does not exist in the dictionary");
+            }
+        }
 
-		public static Dictionary<TKey, TValue> Concat<TKey, TValue>(this Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
+        public static Dictionary<TKey, TValue> Concat<TKey, TValue>(this Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
         {
             IEnumerable<KeyValuePair<TKey, TValue>> firstDictionary = first;
             IEnumerable<KeyValuePair<TKey, TValue>> secondDictionary = second;
             return firstDictionary.Concat(secondDictionary).ToDictionary(k => k.Key, k => k.Value);
-		}
+        }
 
         /// <summary>
         /// Check if a IEnumerable contains all values present in the other, with the same number of occurences
@@ -136,19 +136,19 @@ namespace NExtends.Primitives.Generics
         }
           
         public static bool ContainsIgnoreCase(this IEnumerable<string> collection, string target)
-		{
-			return collection.Contains(target, StringComparer.OrdinalIgnoreCase);
-		}
+        {
+            return collection.Contains(target, StringComparer.OrdinalIgnoreCase);
+        }
 
-		public static void AddOrUpdate<K, V>(this ConcurrentDictionary<K, V> dictionary, K key, V value)
-		{
-			dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
-		}
+        public static void AddOrUpdate<K, V>(this ConcurrentDictionary<K, V> dictionary, K key, V value)
+        {
+            dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
+        }
 
-		public static IEnumerable<TResult> Cast<TSource, TResult>(this IEnumerable<TSource> collection, Type commonInterface)
-			where TSource : class
-			where TResult : class, new()
-		{
+        public static IEnumerable<TResult> Cast<TSource, TResult>(this IEnumerable<TSource> collection, Type commonInterface)
+            where TSource : class
+            where TResult : class, new()
+        {
             if (!typeof(TSource).IsSubclassOfInterface(commonInterface))
             {
                 throw new ArgumentException($"TSource should implement {commonInterface}");
@@ -159,36 +159,36 @@ namespace NExtends.Primitives.Generics
             }
 
             var sourceProps = (from prop in typeof(TSource).GetProperties() select prop).ToList();
-			var resultProps = (from prop in typeof(TResult).GetProperties() select prop).ToList();
-			var properties = (from prop in commonInterface.GetProperties()
-							 select new
-							 {
-								 source = sourceProps.FirstOrDefault(p => p.Name == prop.Name),
-								 result = resultProps.FirstOrDefault(p => p.Name == prop.Name)
-							 })
-							 .ToList();
+            var resultProps = (from prop in typeof(TResult).GetProperties() select prop).ToList();
+            var properties = (from prop in commonInterface.GetProperties()
+                             select new
+                             {
+                                 source = sourceProps.FirstOrDefault(p => p.Name == prop.Name),
+                                 result = resultProps.FirstOrDefault(p => p.Name == prop.Name)
+                             })
+                             .ToList();
 
-			foreach (var sourceObject in collection)
-			{
-				var resultObject = new TResult();
+            foreach (var sourceObject in collection)
+            {
+                var resultObject = new TResult();
 
-				foreach (var property in properties)
-				{
-					property.result.SetValue(resultObject, property.source.GetValue(sourceObject, null), null);
-				}
+                foreach (var property in properties)
+                {
+                    property.result.SetValue(resultObject, property.source.GetValue(sourceObject, null), null);
+                }
 
-				yield return resultObject;
-			}
-		}
+                yield return resultObject;
+            }
+        }
         
-		public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> collection) => new HashSet<TSource>(collection);
+        public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> collection) => new HashSet<TSource>(collection);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> source) => source == null || !source.Any();
 
         public static bool IsEquivalentTo<T>(this ICollection<T> expected, ICollection<T> actual, IEqualityComparer<T> comparer = null)
         {
-            if (actual == null)
+            if (expected == null != (actual == null))
             {
                 return false;
             }
