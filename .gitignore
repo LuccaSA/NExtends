@@ -1,4 +1,4 @@
-﻿*/bin/*
+*/bin/*
 */obj/*
 
 *.suo
@@ -19,3 +19,5 @@ packages/# NuGet Packages
 /ComputeVersion.ps1
 /.versionCounter
 /NExtends/*.user
+NExtends/_site/
+NExtends/log.txt

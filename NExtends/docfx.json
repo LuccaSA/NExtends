@@ -3,9 +3,8 @@
     {
       "src": [
         {
-          "files": [ "**/*.sln", "src/DotnetNew/*.csproj" ],
-          "exclude": [ "**/bin/**", "**/obj/**" ],
-          "cwd": "src"
+          "files": [ "**/*.cs" ],
+          "exclude": [ "**/bin/**", "**/obj/**" ]
         }
       ],
       "dest": "obj/api"
