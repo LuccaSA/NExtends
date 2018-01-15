@@ -156,13 +156,10 @@ namespace NExtends.Html
         /// </summary>
         private static void CleanNodes(HtmlNode node, HashSet<string> whitelist)
         {
-            if (node.NodeType == HtmlNodeType.Element)
+            if (node.NodeType == HtmlNodeType.Element && !whitelist.Contains(node.Name))
             {
-                if (!whitelist.Contains(node.Name))
-                {
-                    node.ParentNode.RemoveChild(node);
-                    return;
-                }
+                node.ParentNode.RemoveChild(node);
+                return;
             }
 
             if (node.HasChildNodes)
