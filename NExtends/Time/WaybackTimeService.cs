@@ -4,8 +4,8 @@ namespace NExtends.Time
 {
     public class WaybackTimeService : ITimeService
     {
-        private DateTime _reference;
-        private DateTime _instantiatedAt;
+        private readonly DateTime _reference;
+        private readonly DateTime _instantiatedAt;
 
         public WaybackTimeService(DateTime reference)
         {
