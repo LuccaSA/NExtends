@@ -21,3 +21,4 @@ packages/# NuGet Packages
 /NExtends/*.user
 NExtends/_site/
 NExtends/log.txt
+/NExtends/Attributes/obj/
