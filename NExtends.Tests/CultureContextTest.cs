@@ -55,6 +55,7 @@ namespace NExtends.Tests
             });
         }
 
+#if NETCOREAPP2_0
         [Fact]
         public async Task AsyncSwap()
         {
@@ -90,10 +91,11 @@ namespace NExtends.Tests
 
         private async Task AsyncDelay(Action action)
         {
-            await Task.Delay(100);
+            await Task.Delay(10);
             await Task.Yield();
             if (action != null)
                 action();
         }
+#endif
     }
 }
