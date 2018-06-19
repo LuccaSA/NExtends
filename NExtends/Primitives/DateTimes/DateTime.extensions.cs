@@ -1,21 +1,24 @@
-﻿using System;
+﻿using NExtends.Context;
+using System;
 using System.Globalization;
 
 namespace NExtends.Primitives.DateTimes
 {
 	public static class DateTimeExtensions
 	{
+        private static CultureInfo _FrenchCultureInfo = new CultureInfo("fr-FR");
+
 		public static String ToShortUpperDay(this DateTime d)
 		{
 			return d.ToString("dddd").Substring(0, 3).ToUpper();
 		}
 		public static String ToFrenchLongText(this DateTime d)
 		{
-			return d.Day + " " + d.ToString("MMMM") + " " + d.Year;
+			return d.Day + " " + d.ToString("MMMM", _FrenchCultureInfo) + " " + d.Year;
 		}
 		public static String ToFrenchLongTextHeure(this DateTime d)
 		{
-			return String.Format("{0:d MMMM yyyy à hh'h'mm}", d);
+			return String.Format(_FrenchCultureInfo, "{0:d MMMM yyyy à hh'h'mm}", d);
 		}
 		public static String ToShortUpperMonth(this DateTime d)
 		{
