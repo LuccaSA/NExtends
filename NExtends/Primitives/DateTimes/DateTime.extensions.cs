@@ -15,7 +15,7 @@ namespace NExtends.Primitives.DateTimes
 		}
 		public static String ToFrenchLongTextHeure(this DateTime d)
 		{
-			return d.Day + " " + d.ToString("MMMM") + " " + d.Year + " à " + d.Hour + "h" + d.Minute;
+			return String.Format("{0:d MMMM yyyy à hh'h'mm}", d);
 		}
 		public static String ToShortUpperMonth(this DateTime d)
 		{

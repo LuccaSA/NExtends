@@ -284,5 +284,12 @@ namespace NExtends.Tests.Primitives.DateTimes
         {
             Assert.Equal(DateTimeExtensions.GetLastSundayOfYearISO8601(2009), new DateTime(2010, 1, 3));
         }
+
+        [Fact]
+        public void TestToFrenchLongTextHeureShouldAlwaysWriteMinutesWithTwoNumbers()
+        {
+            var d = new DateTime(2018, 6, 1, 10, 9, 0);
+            Assert.Contains("09", d.ToFrenchLongTextHeure());
+        }
     }
 }
