@@ -15,6 +15,7 @@ namespace NExtends.Primitives.Enums
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		public static void CheckIsEnum<T>() where T : struct { CheckIsEnum(typeof(T)); }
+
 		static void CheckIsEnum(Type t)
 		{
 			if (!t.GetTypeInfo().IsEnum)
@@ -27,7 +28,7 @@ namespace NExtends.Primitives.Enums
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static List<T> EnumToList<T>() where T : struct
+		public static List<T> EnumToList<T>() where T : Enum
 		{
 			var list = new List<T>();
 			var type = typeof(T);
@@ -50,8 +51,8 @@ namespace NExtends.Primitives.Enums
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static Dictionary<string, int> EnumToDictionary<T>() where T : struct
-		{
+		public static Dictionary<string, int> EnumToDictionary<T>() where T : Enum
+        {
 			return EnumToList<T>().ToDictionary(e => e.ToString(), e => Convert.ToInt32(e));
 		}
 
@@ -61,14 +62,14 @@ namespace NExtends.Primitives.Enums
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static T Parse<T>(this string value) where T : struct
-		{
+		public static T Parse<T>(this string value) where T : Enum
+        {
 			return (T)Enum.Parse(typeof(T), value, true);
 		}
 
-		public static bool TryParse<T>(this string value, out T result) where T : struct
-		{
-			return Enum.TryParse<T>(value, true, out result);
+		public static bool TryParse<T>(this string value, out T result) where T : struct, Enum
+        {
+			return Enum.TryParse(value, true, out result);
 		}
 
 		/// <summary>
@@ -77,8 +78,8 @@ namespace NExtends.Primitives.Enums
 		/// <typeparam name="T">The type of the attribute you want to retrieve</typeparam>
 		/// <param name="enumVal">The enum value</param>
 		/// <returns>The attribute of type T that exists on the enum value</returns>
-		public static T GetAttributeOfType<T>(this Enum enumVal) where T : System.Attribute
-		{
+		public static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
+        {
 			var type = enumVal.GetType();
 			var memInfo = type.GetMember(enumVal.ToString());
 			var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
@@ -139,8 +140,14 @@ namespace NExtends.Primitives.Enums
 		/// http://stackoverflow.com/questions/79126/create-generic-method-constraining-t-to-an-enum
 		/// Didn't want to go the hardcore way by going through IL - even though it was pretty tempting :)
 		/// </summary>
-		public static TEnum ParseEnum<TEnum>(this string value) where TEnum : struct, IComparable, IFormattable, IConvertible { return ParseEnum<TEnum>(value, true, default(TEnum)); }
-		public static TEnum ParseEnum<TEnum>(this string value, bool ignoreCase, TEnum defaultValue) where TEnum : struct, IComparable, IFormattable, IConvertible
+		public static TEnum ParseEnum<TEnum>(this string value) 
+            where TEnum : struct, Enum, IComparable, IFormattable, IConvertible
+        {
+            return ParseEnum<TEnum>(value, true, default(TEnum));
+        }
+
+		public static TEnum ParseEnum<TEnum>(this string value, bool ignoreCase, TEnum defaultValue) 
+            where TEnum : struct, Enum, IComparable, IFormattable, IConvertible
 		{
 			CheckIsEnum<TEnum>();
 			if (string.IsNullOrEmpty(value)) { return defaultValue; }
