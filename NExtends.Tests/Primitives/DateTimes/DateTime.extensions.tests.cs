@@ -1,4 +1,5 @@
-﻿using NExtends.Primitives.DateTimes;
+﻿using NExtends.Context;
+using NExtends.Primitives.DateTimes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -284,5 +285,32 @@ namespace NExtends.Tests.Primitives.DateTimes
         {
             Assert.Equal(DateTimeExtensions.GetLastSundayOfYearISO8601(2009), new DateTime(2010, 1, 3));
         }
+
+        [Fact]
+        public void TestToFrenchLongTextHeureShouldAlwaysWriteMinutesWithTwoNumbers()
+        {
+            var d = new DateTime(2018, 6, 1, 10, 9, 0);
+            Assert.Contains("09", d.ToFrenchLongTextHeure());
+        }
+
+        [Fact]
+        public void TestToFrenchLongTextHeureShouldAlwaysWriteMonthInFrench()
+        {
+            var d = new DateTime(2018, 6, 1, 10, 0, 0);
+            using (new CultureContext("en-US"))
+            {
+                Assert.Contains("juin", d.ToFrenchLongTextHeure().ToLower());
+            }
+        }
+        [Fact]
+        public void TestToFrenchLongTextShouldAlwaysWriteMonthInFrench()
+        {
+            var d = new DateTime(2018, 6, 1, 10, 0, 0);
+            using (new CultureContext("en-US"))
+            {
+                Assert.Contains("juin", d.ToFrenchLongText().ToLower());
+            }
+        }
+
     }
 }
