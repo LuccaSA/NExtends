@@ -1,5 +1,11 @@
 # Change log
 
+##2.3
+### New features
+ - Add ``Type.isPseudoValue``, for types that can be serialized in json as primitives
+
+______________________
+
 ## 2.0 (.NET Standard 2.0)
 
 ### Changes

@@ -5,14 +5,85 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 
 namespace NExtends.Primitives.Types
 {
 	public static class TypeExtensions
-	{
-		//http://stackoverflow.com/questions/36032555/compare-propertyinfo-name-to-an-existing-property-in-a-safe-way
-		public static bool IsEqual<T>(this PropertyInfo prop, Expression<Func<T, object>> propertyExpression)
+    {
+        public static readonly IReadOnlyCollection<Type> PseudoValueTypes = new HashSet<Type>
+        {
+            typeof(char),
+            typeof(char?),
+            typeof(bool),
+            typeof(bool?),
+            typeof(sbyte),
+            typeof(sbyte?),
+            typeof(short),
+            typeof(short?),
+            typeof(ushort),
+            typeof(ushort?),
+            typeof(int),
+            typeof(int?),
+            typeof(byte),
+            typeof(byte?),
+            typeof(uint),
+            typeof(uint?),
+            typeof(long),
+            typeof(long?),
+            typeof(ulong),
+            typeof(ulong?),
+            typeof(float),
+            typeof(float?),
+            typeof(double),
+            typeof(double?),
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?),
+            typeof(decimal),
+            typeof(decimal?),
+            typeof(Guid),
+            typeof(Guid?),
+            typeof(TimeSpan),
+            typeof(TimeSpan?),
+            typeof(BigInteger),
+            typeof(BigInteger?),
+            typeof(Uri),
+            typeof(string),
+            typeof(byte[]),
+            typeof(DBNull)
+        };
+
+        /// <summary>
+        /// Types that can be serialized as a simple value
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static bool IsPseudoValue(this Type type)
+        {
+            if (type == null)
+            {
+                return false;
+            }
+
+            if (PseudoValueTypes.Contains(type) || type.IsEnum)
+            {
+                return true;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                return Nullable.GetUnderlyingType(type).IsEnum;
+            }
+
+            return false;
+        }
+
+
+        //http://stackoverflow.com/questions/36032555/compare-propertyinfo-name-to-an-existing-property-in-a-safe-way
+        public static bool IsEqual<T>(this PropertyInfo prop, Expression<Func<T, object>> propertyExpression)
 		{
 			var mbody = propertyExpression.Body as MemberExpression;
 
