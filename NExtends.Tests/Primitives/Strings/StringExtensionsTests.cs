@@ -41,5 +41,19 @@ namespace NExtends.Tests.Primitives.Strings
             Assert.Equal("lOlé.3.4", "lOlé 3.4".ToFileName());
             Assert.Equal("lOlé.3.4", @"<l?O%l/é\ *3:.>4|".ToFileName());
         }
+
+        [Fact]
+        public void ChangeTypeShouldConvertDecimalValues()
+        {
+            var result = (decimal)StringExtensions.ChangeType("12.054", typeof(decimal), CultureInfo.InvariantCulture);
+            Assert.Equal(12.054m, result);
+        }
+
+        [Fact]
+        public void ChangeTypeShouldConvertDecimalScientificValues()
+        {
+            var result = (decimal)StringExtensions.ChangeType("3.6E-05", typeof(decimal), CultureInfo.InvariantCulture);
+            Assert.Equal(0.000036m, result);
+        }
     }
 }
