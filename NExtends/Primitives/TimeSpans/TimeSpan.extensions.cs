@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using NExtends.Primitives.Doubles;
@@ -109,7 +110,7 @@ namespace NExtends.Primitives.TimeSpans
             {
                 sb.Append("-");
             }
-            sb.AppendFormat("{0} " + initials.DaysInitial, absSpan.TotalDays.RealRound(5));
+            sb.AppendFormat(CultureInfo.InvariantCulture, "{0} " + initials.DaysInitial, absSpan.TotalDays.RealRound(5));
             return sb.ToString();
         }
     }
