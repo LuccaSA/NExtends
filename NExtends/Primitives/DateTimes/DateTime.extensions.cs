@@ -1,5 +1,6 @@
 ﻿using NExtends.Context;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace NExtends.Primitives.DateTimes
@@ -293,6 +294,83 @@ namespace NExtends.Primitives.DateTimes
         {
             // Source: http://stackoverflow.com/a/11558076
             return dt.AddTicks(-dt.Ticks % TimeSpan.TicksPerSecond);
+        }
+
+        public static Period GetQuarterRange(this DateTime d)
+        {
+            var firstMonthOfQuarter = Math.Floor((double)(d.Month - 1) / 3) * 3 + 1;
+
+            var quarterStart = new DateTime(d.Year, (int)firstMonthOfQuarter, 1);
+            var quarterEnd = quarterStart.AddMonths(2).LastOfMonth();
+
+            return new Period(quarterStart, quarterEnd);
+        }
+
+        public static int GetISO8601WeekNumber(this DateTime d)
+        {
+            DateTime date = d;
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(d);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                date = date.AddDays(3);
+            }
+
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public static Period GetIncludingPeriod(this DateTime date, TimeSliceMode timeSliceMode)
+        {
+            DateTime start, end;
+
+            switch (timeSliceMode)
+            {
+                default:
+                case TimeSliceMode.Week:
+                    start = date.PreviousOrCurrent(DayOfWeek.Monday);
+                    end = date.NextOrCurrent(DayOfWeek.Sunday);
+                    break;
+
+                case TimeSliceMode.Fortnight:
+                    if (date.Day <= 15)
+                    {
+                        start = new DateTime(date.Year, date.Month, 1);
+                        end = new DateTime(date.Year, date.Month, 15);
+                    }
+                    else
+                    {
+                        start = new DateTime(date.Year, date.Month, 16);
+                        end = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+                    }
+                    break;
+
+                case TimeSliceMode.Month:
+                    start = new DateTime(date.Year, date.Month, 1);
+                    end = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+                    break;
+            }
+
+            return new Period(start, end);
+        }
+
+        public static List<Period> GetPreviousPeriods(this DateTime date, TimeSliceMode timeSliceMode, int nbPeriod, bool includeDate)
+        {
+            // we want to include dtStart => add one day
+            DateTime startOfPeriodSeek = includeDate ? date.AddDays(1) : date;
+
+            var periods = new List<Period>();
+
+            for (int i = 0; i < nbPeriod; i++)
+            {
+                // Date we look => last date of previous range
+                var period = GetIncludingPeriod(startOfPeriodSeek.AddDays(-1), timeSliceMode);
+
+                periods.Add(new Period(period.Start, period.End));
+
+                // for next iteration
+                startOfPeriodSeek = period.Start;
+            }
+
+            return periods;
         }
     }
 }
