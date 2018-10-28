@@ -41,5 +41,16 @@ namespace NExtends.Tests.Primitives.Strings
             Assert.Equal("lOlé.3.4", "lOlé 3.4".ToFileName());
             Assert.Equal("lOlé.3.4", @"<l?O%l/é\ *3:.>4|".ToFileName());
         }
+
+        [Theory]
+        [InlineData("/api/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/API/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/api/", "https://client.ilucca.net/API/v3/users")]
+        public void ContainsIgnoreCaseShouldWork(string match, string chain)
+        {
+            var result = chain.ContainsIgnoreCase(match);
+
+            Assert.True(result);
+        }
     }
 }
