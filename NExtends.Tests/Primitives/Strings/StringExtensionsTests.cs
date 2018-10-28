@@ -41,5 +41,24 @@ namespace NExtends.Tests.Primitives.Strings
             Assert.Equal("lOlé.3.4", "lOlé 3.4".ToFileName());
             Assert.Equal("lOlé.3.4", @"<l?O%l/é\ *3:.>4|".ToFileName());
         }
+
+        [Theory]
+        [InlineData("toto")]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void ShouldReturnFalseWhenTextIsNotEmail(string value)
+        {
+            Assert.False(value.isEmail());
+        }
+
+        [Theory]
+        [InlineData("toto@lucca.fr")]
+        [InlineData("toto@l")]
+        [InlineData("toto@lucca")]
+        public void ShouldReturnTrueWhenTextIsEmail(string value)
+        {
+            Assert.True(value.isEmail());
+        }
     }
 }
