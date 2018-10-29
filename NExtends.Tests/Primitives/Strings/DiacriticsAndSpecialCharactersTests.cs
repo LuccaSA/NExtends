@@ -40,21 +40,5 @@ namespace NExtends.Tests.Primitives.Strings
 
             Assert.Equal(expected, result);
         }
-
-        [Theory]
-        [InlineData("toto")]
-        public void ShouldReturnFalseWhenTextIsNotEmail(string value)
-        {
-            Assert.False(value.isEmail());
-        }
-
-        [Theory]
-        [InlineData("toto@lucca.fr")]
-        [InlineData("toto@l")]
-        [InlineData("toto@lucca")]
-        public void ShouldReturnTrueWhenTextIsEmail(string value)
-        {
-            Assert.True(value.isEmail());
-        }
     }
 }
