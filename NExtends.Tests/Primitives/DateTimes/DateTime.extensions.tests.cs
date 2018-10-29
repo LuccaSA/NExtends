@@ -312,6 +312,78 @@ namespace NExtends.Tests.Primitives.DateTimes
             }
         }
 
+        public static IEnumerable<object[]> TestGetQuarterRangeData()
+        {
+            var firstQuarter = new Period(new DateTime(2016, 01, 01), new DateTime(2016, 03, 31));
+            var secondQuarter = new Period(new DateTime(2016, 04, 01), new DateTime(2016, 06, 30));
+            var thirdQuarter = new Period(new DateTime(2016, 07, 01), new DateTime(2016, 09, 30));
+            var fourthQuarter = new Period(new DateTime(2016, 10, 01), new DateTime(2016, 12, 31));
+
+            yield return new object[] { new DateTime(2016, 01, 01), firstQuarter};
+            yield return new object[] { new DateTime(2016, 02, 15), firstQuarter };
+            yield return new object[] { new DateTime(2016, 03, 31), firstQuarter };
+            yield return new object[] { new DateTime(2016, 04, 01), secondQuarter };
+            yield return new object[] { new DateTime(2016, 05, 15), secondQuarter };
+            yield return new object[] { new DateTime(2016, 06, 30), secondQuarter };
+            yield return new object[] { new DateTime(2016, 07, 01), thirdQuarter };
+            yield return new object[] { new DateTime(2016, 08, 15), thirdQuarter };
+            yield return new object[] { new DateTime(2016, 09, 30), thirdQuarter };
+            yield return new object[] { new DateTime(2016, 10, 01), fourthQuarter };
+            yield return new object[] { new DateTime(2016, 11, 15), fourthQuarter };
+            yield return new object[] { new DateTime(2016, 12, 31), fourthQuarter };
+        }
+        [Theory]
+        [MemberData(nameof(TestGetQuarterRangeData))]
+        public void TestGetQuarterRange(DateTime date, Period expectedQuarter)
+        {
+            var quarter = date.GetQuarterRange();
+
+            Assert.Equal(expectedQuarter, quarter);
+        }
+
+        public static IEnumerable<object[]> TestGetISO8601WeekNumberData()
+        {
+            yield return new object[] { new DateTime(2015, 01, 04), 1 };
+            yield return new object[] { new DateTime(2015, 01, 05), 2 };
+            yield return new object[] { new DateTime(2016, 01, 04), 1 };
+            yield return new object[] { new DateTime(2012, 12, 31), 1 };
+        }
+        [Theory]
+        [MemberData(nameof(TestGetISO8601WeekNumberData))]
+        public void TestGetISO8601WeekNumber(DateTime date, int expectedWeekNumber)
+        {
+            Assert.Equal(expectedWeekNumber, date.GetISO8601WeekNumber());
+        }
+
+        public static IEnumerable<object[]> GetIncludingPeriodShouldWorkData()
+        {
+            var weekPeriod = new Period(new DateTime(2018, 10, 15), new DateTime(2018, 10, 21));
+            var fortnightPeriod = new Period(new DateTime(2018, 10, 16), new DateTime(2018, 10, 31));
+            var monthPeriod = new Period(new DateTime(2018, 10, 01), new DateTime(2018, 10, 31));
+
+            yield return new object[] { new DateTime(2018, 10, 15), TimeSliceMode.Week, weekPeriod };
+            yield return new object[] { new DateTime(2018, 10, 16), TimeSliceMode.Week, weekPeriod };
+            yield return new object[] { new DateTime(2018, 10, 21), TimeSliceMode.Week, weekPeriod };
+
+            yield return new object[] { new DateTime(2018, 10, 16), TimeSliceMode.Fortnight, fortnightPeriod };
+            yield return new object[] { new DateTime(2018, 10, 17), TimeSliceMode.Fortnight, fortnightPeriod };
+            yield return new object[] { new DateTime(2018, 10, 31), TimeSliceMode.Fortnight, fortnightPeriod };
+
+            yield return new object[] { new DateTime(2018, 10, 01), TimeSliceMode.Month, monthPeriod };
+            yield return new object[] { new DateTime(2018, 10, 14), TimeSliceMode.Month, monthPeriod };
+            yield return new object[] { new DateTime(2018, 10, 15), TimeSliceMode.Month, monthPeriod };
+            yield return new object[] { new DateTime(2018, 10, 16), TimeSliceMode.Month, monthPeriod };
+            yield return new object[] { new DateTime(2018, 10, 31), TimeSliceMode.Month, monthPeriod };
+        }
+        [Theory]
+        [MemberData(nameof(GetIncludingPeriodShouldWorkData))]
+        public void GetIncludingPeriodShouldWork(DateTime date, TimeSliceMode timeSliceMode, Period expectedPeriod)
+        {
+            var result = date.GetIncludingPeriod(timeSliceMode);
+
+            Assert.Equal(expectedPeriod, result);
+        }
+
         [Theory]
         [InlineData(2018, 11, 5, 22, 30, "fr-FR", "05/11/2018 22:30")]
         [InlineData(2018, 11, 5, 22, 30, "en-US", "11/5/2018 10:30 PM")]
