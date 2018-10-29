@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text;
+using NExtends.Primitives.Doubles;
 
 namespace NExtends.Primitives.TimeSpans
 {
@@ -41,5 +45,73 @@ namespace NExtends.Primitives.TimeSpans
 		public static bool IsPositiveOrZero(this TimeSpan t1) { return t1.Ticks >= 0; }
 		public static bool IsNegativeOrZero(this TimeSpan t1) { return t1.Ticks <= 0; }
 		public static bool IsNegative(this TimeSpan t1) { return t1.Ticks < 0; }
-	}
+
+        public static string Humanize(this TimeSpan timeSpan, TimeUnit timeUnit, TimeInitials initials, bool showSign = false)
+        {
+            switch (timeUnit)
+            {
+                case TimeUnit.Day:
+                    return ToDays(timeSpan, initials, showSign);
+                case TimeUnit.Duration:
+                case TimeUnit.Time:
+                    return ToHours(timeSpan, initials, showSign);
+                case TimeUnit.NotApplicable:
+                default:
+                    throw new InvalidEnumArgumentException(nameof(timeUnit));
+            }
+        }
+
+        public static string ToHours(this TimeSpan timeSpan, TimeInitials initials, bool showSign = false)
+        {
+            if (timeSpan == TimeSpan.Zero)
+            {
+                return "-";
+            }
+            var absSpan = new TimeSpan(Math.Abs(timeSpan.Ticks));
+            var totalHours = Math.Floor(absSpan.TotalHours);
+
+            var sb = new StringBuilder();
+            if (showSign && timeSpan > TimeSpan.Zero)
+            {
+                sb.Append("+");
+            }
+            if (timeSpan < TimeSpan.Zero)
+            {
+                sb.Append("-");
+            }
+            if (totalHours > 0)
+            {
+                sb.Append(totalHours + initials.HoursInitial);
+            }
+            if (absSpan.Minutes > 0)
+            {
+                sb.Append(absSpan.Minutes.ToString("D2"));
+            }
+            if (absSpan.Minutes > 0 && totalHours == 0)
+            {
+                sb.Append(initials.MinutesInitial);
+            }
+            return sb.ToString();
+        }
+
+        public static string ToDays(this TimeSpan span, TimeInitials initials, bool showSign = false)
+        {
+            if (span == TimeSpan.Zero)
+            {
+                return "-";
+            }
+            var absSpan = new TimeSpan(Math.Abs(span.Ticks));
+            var sb = new StringBuilder();
+            if (showSign && span > TimeSpan.Zero)
+            {
+                sb.Append("+");
+            }
+            if (span < TimeSpan.Zero)
+            {
+                sb.Append("-");
+            }
+            sb.AppendFormat(CultureInfo.InvariantCulture, "{0} " + initials.DaysInitial, absSpan.TotalDays.RealRound(5));
+            return sb.ToString();
+        }
+    }
 }
