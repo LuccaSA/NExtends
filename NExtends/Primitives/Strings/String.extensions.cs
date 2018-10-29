@@ -247,6 +247,10 @@ namespace NExtends.Primitives.Strings
             {
                 return new Guid(value);
             }
+            else if (propertyType == typeof(decimal))
+            {
+                return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.Number, culture);
+            }
             else if (propertyType == typeof(Uri))
             {
                 return new Uri(value);
