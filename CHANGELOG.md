@@ -1,5 +1,38 @@
 # Change log
 
+## 2.1
+
+### Removed
+
+- DictionaryListMapper.cs
+- ObjectPropertiesList.cs
+- DateTime.DayText()
+- Shift (only used in legacy YupieManager.cs)
+- Add and ContainsKey methods : dangerous method given the unusual use case
+- Json, XML, INSEE methods & extensions
+- ObjectExtensions
+
+### Add & improves
+
+- Tests on RequiredIfAttribute
+- Improve speed of method
+- Expressions features from Lucca
+- Refactoring of UpdateKey, Contains methods
+- Specific targeting for ToDictionary & ToHashSet (api surface differs between net461 & netcoreapp2)
+- String.Replace, IsGuid optimisation
+
+### Resolved
+
+- #17 - Aligns GetFriendlyName( ) upon Lucca implementation
+- #3
+- #8
+- #43
+
+### Miscellanous
+
+- NETCore contains case insensitive replacement natively, but here we are in NETStandard ;)
+- Xunit updated to 2.3.1
+
 ## 2.0 (.NET Standard 2.0)
 
 ### Changes
