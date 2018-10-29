@@ -11,12 +11,12 @@
 - Add DateTime.GetIncludingPeriod()
 - Add DateTime.GetPreviousPeriods()
 - Add DateTimeHelper.GetDateOfFirstDayOfWeek()
-- Fix #30
-- Fix #31
-- Fix #39
-- Fix #40
-- Fix #42
-- Fix #46
+- Fix [#30](https://github.com/LuccaSA/NExtends/issues/30)
+- Fix [#31](https://github.com/LuccaSA/NExtends/issues/31)
+- Fix [#39](https://github.com/LuccaSA/NExtends/issues/39)
+- Fix [#40](https://github.com/LuccaSA/NExtends/issues/40)
+- Fix [#42](https://github.com/LuccaSA/NExtends/issues/42)
+- Fix [#46](https://github.com/LuccaSA/NExtends/issues/46)
 
 ## 2.2.4
 
@@ -61,10 +61,10 @@
 
 ### Resolved
 
-- #17 - Aligns GetFriendlyName( ) upon Lucca implementation
-- #3
-- #8
-- #43
+- [#17](https://github.com/LuccaSA/NExtends/issues/17) - Aligns GetFriendlyName( ) upon Lucca implementation
+- [#3](https://github.com/LuccaSA/NExtends/issues/3)
+- [#8](https://github.com/LuccaSA/NExtends/issues/8)
+- [#43](https://github.com/LuccaSA/NExtends/issues/43)
 
 ### Miscellanous
 
