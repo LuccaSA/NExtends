@@ -1,5 +1,43 @@
 # Change log
 
+## 2.3
+
+- Change DateTime.ToShortDateTimeString() now takes a Culture parameter
+- Add TimeSpan.Humanize()
+- Add TimeSpan.ToDays()
+- Add TimeSpan.ToHours()
+- Add DateTime.GetQuarterRange()
+- Add DateTime.GetISO8601WeekNumber()
+- Add DateTime.GetIncludingPeriod()
+- Add DateTime.GetPreviousPeriods()
+- Add DateTimeHelper.GetDateOfFirstDayOfWeek()
+- Fix #30
+- Fix #31
+- Fix #39
+- Fix #40
+- Fix #42
+- Fix #46
+
+## 2.2.4
+
+- Add Period.cs from RDD
+
+## 2.2.3
+
+### Breaking changes
+
+- C# 7.3 Enum constraints
+
+## 2.2
+
+### Add & improves
+
+- TimeService Permet de mocker DateTime.Now dans les tests, il suffit d'injecter un ITimeService là où on a besoin de DateTime.Now ou .Today dans le code, et ainsi avoir des tests qui sont agnostics du temps qui passe
+
+### Resolved
+
+- #48 - Try fix async TU
+
 ## 2.1
 
 ### Removed
