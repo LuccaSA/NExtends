@@ -312,5 +312,14 @@ namespace NExtends.Tests.Primitives.DateTimes
             }
         }
 
+        [Theory]
+        [InlineData(2018, 11, 5, 22, 30, "fr-FR", "05/11/2018 22:30")]
+        [InlineData(2018, 11, 5, 22, 30, "en-US", "11/5/2018 10:30 PM")]
+        public void ToShortDateTimeStringShouldWork(int year, int month, int day, int hour, int minute, string cultureName, string expected)
+        {
+            var d = new DateTime(year, month, day, hour, minute, 00);
+
+            Assert.Equal(expected, d.ToShortDateTimeString(CultureInfo.GetCultureInfo(cultureName)));
+        }
     }
 }

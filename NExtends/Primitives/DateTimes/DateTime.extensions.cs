@@ -119,9 +119,9 @@ namespace NExtends.Primitives.DateTimes
 		}
 
 		//https://github.com/dotnet/coreclr/issues/2317
-		public static String ToShortDateTimeString(this DateTime d)
+		public static String ToShortDateTimeString(this DateTime d, CultureInfo cultureInfo)
 		{
-			return d.ToString("d") + " " + d.ToString("t");
+			return d.ToString("d", cultureInfo) + " " + d.ToString("t", cultureInfo);
 		}
 		/// <summary>
 		///  new DateTime(2008, 8, 29, 19, 27, 15) ==> août 2008
