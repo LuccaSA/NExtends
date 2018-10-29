@@ -41,5 +41,48 @@ namespace NExtends.Tests.Primitives.Strings
             Assert.Equal("lOlé.3.4", "lOlé 3.4".ToFileName());
             Assert.Equal("lOlé.3.4", @"<l?O%l/é\ *3:.>4|".ToFileName());
         }
+
+        [Fact]
+        public void ChangeTypeShouldConvertDecimalValues()
+        {
+            var result = (decimal)StringExtensions.ChangeType("12.054", typeof(decimal), CultureInfo.InvariantCulture);
+            Assert.Equal(12.054m, result);
+        }
+
+        [Fact]
+        public void ChangeTypeShouldConvertDecimalScientificValues()
+        {
+            var result = (decimal)StringExtensions.ChangeType("3.6E-05", typeof(decimal), CultureInfo.InvariantCulture);
+            Assert.Equal(0.000036m, result);
+        }
+
+        [Theory]
+        [InlineData("/api/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/API/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/api/", "https://client.ilucca.net/API/v3/users")]
+        public void ContainsIgnoreCaseShouldWork(string match, string chain)
+        {
+            var result = chain.ContainsIgnoreCase(match);
+
+            Assert.True(result);
+        }
+
+        [InlineData("toto")]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void ShouldReturnFalseWhenTextIsNotEmail(string value)
+        {
+            Assert.False(value.isEmail());
+        }
+
+        [Theory]
+        [InlineData("toto@lucca.fr")]
+        [InlineData("toto@l")]
+        [InlineData("toto@lucca")]
+        public void ShouldReturnTrueWhenTextIsEmail(string value)
+        {
+            Assert.True(value.isEmail());
+        }
     }
 }

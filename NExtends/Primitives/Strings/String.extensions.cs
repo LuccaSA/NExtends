@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,7 +29,7 @@ namespace NExtends.Primitives.Strings
             //https://stackoverflow.com/a/1374644/533686
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
+                var addr = new MailAddress(email);
                 return addr.Address == email;
             }
             catch
@@ -245,6 +246,10 @@ namespace NExtends.Primitives.Strings
             else if (propertyType == typeof(Guid))
             {
                 return new Guid(value);
+            }
+            else if (propertyType == typeof(decimal))
+            {
+                return Decimal.Parse(value, NumberStyles.AllowExponent | NumberStyles.Number, culture);
             }
             else if (propertyType == typeof(Uri))
             {
