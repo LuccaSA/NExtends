@@ -43,6 +43,16 @@ namespace NExtends.Tests.Primitives.Strings
         }
 
         [Theory]
+        [InlineData("/api/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/API/", "https://client.ilucca.net/api/v3/users")]
+        [InlineData("/api/", "https://client.ilucca.net/API/v3/users")]
+        public void ContainsIgnoreCaseShouldWork(string match, string chain)
+        {
+            var result = chain.ContainsIgnoreCase(match);
+
+            Assert.True(result);
+        }
+
         [InlineData("toto")]
         [InlineData(null)]
         [InlineData("")]
