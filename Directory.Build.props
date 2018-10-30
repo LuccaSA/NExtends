@@ -1,0 +1,38 @@
+<Project>
+
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.DotSettings;*.ncrunchproject</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionSuffix>alpha</VersionSuffix>
+    <PackageVersion>2.0.0</PackageVersion>
+    <Authors>Lucca team</Authors>
+    <Description>NExtends</Description>
+    <PackageProjectUrl>https://github.com/LuccaSA/NExtends/</PackageProjectUrl>
+    <Copyright>Copyright Lucca 2018</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SourceLinkEnabled Condition="'$(SourceLinkEnabled)' == ''">false</SourceLinkEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SourceLinkEnabled)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Deterministic>true</Deterministic>
+    <DeterministicSourcePaths>false</DeterministicSourcePaths>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(SourceLinkEnabled)' == 'true'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>

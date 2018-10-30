@@ -2,7 +2,7 @@
 
   <PropertyGroup>    
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <ProjectGuid>{9EA0C475-5A2B-4589-8526-520DEAF6111F}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>

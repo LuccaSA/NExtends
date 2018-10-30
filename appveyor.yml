@@ -56,7 +56,7 @@ test_script:
 - Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
 
 after_test:
-- ps: dotnet pack NExtends\NExtends.csproj --configuration Release /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
+- ps: dotnet pack NExtends\NExtends.csproj --configuration Release /p:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /p:SourceLinkEnabled=true /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
 
 artifacts:
   - path: NExtends\artifacts\*.nupkg
