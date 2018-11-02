@@ -1,7 +1,5 @@
 ﻿using NExtends.Primitives.DateTimes;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace NExtends.Tests.Primitives.DateTimes
@@ -30,6 +28,75 @@ namespace NExtends.Tests.Primitives.DateTimes
 
             Assert.Equal(startsAt, period.Start);
             Assert.Equal(endsAt, period.End);
+        }
+
+        [Fact]
+        public void PeriodCannotBeNegative()
+        {
+            Assert.Throws<NegativeDurationException>(() =>
+            {
+                var period = new Period(new DateTime(2018, 10, 30), new DateTime(2018, 10, 28));
+            });
+        }
+
+        [Fact]
+        public void PeriodCanBeZeroSize()
+        {
+            var startAndEnd = new DateTime(2018, 10, 30);
+
+            var period = new Period(startAndEnd, startAndEnd);
+        }
+
+        [Fact]
+        public void ITimeBlockEndCannotBeModifiedToBeNegative()
+        {
+            var startAndEnd = new DateTime(2018, 10, 30);
+
+            ITimeBlock period = new Period(startAndEnd, startAndEnd);
+
+            Assert.Throws<NegativeDurationException>(() =>
+            {
+                period.ChangeEndsAt(new DateTime(2018, 10, 28));
+            });
+        }
+
+        [Fact]
+        public void ITimeBlockStartCannotBeModifiedToBeNegative()
+        {
+            var startAndEnd = new DateTime(2018, 10, 28);
+
+            ITimeBlock period = new Period(startAndEnd, startAndEnd);
+
+            Assert.Throws<NegativeDurationException>(() =>
+            {
+                period.ChangeStartsAt(new DateTime(2018, 10, 30));
+            });
+        }
+
+        [Fact]
+        public void ITimeBlockDurationCannotBeModifiedToBeNegative()
+        {
+            var startAndEnd = new DateTime(2018, 10, 28);
+
+            ITimeBlock period = new Period(startAndEnd, startAndEnd);
+
+            Assert.Throws<NegativeDurationException>(() =>
+            {
+                period.ChangeDuration(TimeSpan.FromSeconds(-1));
+            });
+        }
+
+        [Fact]
+        public void ITimeBlockDurationCanBeDifferentFromEndMinusStart()
+        {
+            var startAndEnd = new DateTime(2018, 10, 28);
+
+            ITimeBlock period = new Period(startAndEnd, startAndEnd);
+
+            period.ChangeDuration(TimeSpan.FromSeconds(1));
+
+            Assert.Equal(TimeSpan.FromSeconds(1), period.Duration);
+            Assert.Equal(TimeSpan.FromSeconds(0), period.EndsAt - period.StartsAt);
         }
     }
 }

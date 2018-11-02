@@ -1,5 +1,6 @@
 ﻿using NExtends.Primitives.TimeSpans;
 using System;
+using System.Globalization;
 using Xunit;
 
 namespace NExtends.Tests.Primitives.TimeSpans
@@ -20,10 +21,10 @@ namespace NExtends.Tests.Primitives.TimeSpans
         [Theory]
         [InlineData(0, true, "-")]
         [InlineData(0, false, "-")]
-        [InlineData(9, true, "+09mn")]
-        [InlineData(9, false, "09mn")]
-        [InlineData(-9, true, "-09mn")]
-        [InlineData(-9, false, "-09mn")]
+        [InlineData(9, true, "+09m")]
+        [InlineData(9, false, "09m")]
+        [InlineData(-9, true, "-09m")]
+        [InlineData(-9, false, "-09m")]
         [InlineData(69, true, "+1h09")]
         [InlineData(69, false, "1h09")]
         [InlineData(-69, true, "-1h09")]
@@ -32,8 +33,8 @@ namespace NExtends.Tests.Primitives.TimeSpans
         public void TimeSpanToHoursShouldWork(int timeInMinutes, bool showSign, string expected)
         {
             var timespan = TimeSpan.FromMinutes(timeInMinutes);
-            var initials = new TimeInitials("mn", "h", "j");
-            var result = TimeSpanExtensions.ToHours(timespan, initials, showSign);
+            var culture = CultureInfo.GetCultureInfo("fr-FR");
+            var result = TimeSpanExtensions.ToHours(timespan, culture, showSign);
 
             Assert.Equal(expected, result);
         }
@@ -53,8 +54,8 @@ namespace NExtends.Tests.Primitives.TimeSpans
         public void TimeSpanToDaysShouldWork(int timeInMinutes, bool showSign, string expected)
         {
             var timespan = TimeSpan.FromMinutes(timeInMinutes);
-            var initials = new TimeInitials("mn", "h", "j");
-            var result = TimeSpanExtensions.ToDays(timespan, initials, showSign);
+            var culture = CultureInfo.GetCultureInfo("fr-FR");
+            var result = TimeSpanExtensions.ToDays(timespan, culture, showSign);
 
             Assert.Equal(expected, result);
         }
