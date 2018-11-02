@@ -51,7 +51,7 @@ namespace NExtends.Primitives.DateTimes
             }
         }
 
-        public bool Equals(Period other)
+        public virtual bool Equals(Period other)
         {
             if (other == null) { return false; }
 
