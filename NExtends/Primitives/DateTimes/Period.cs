@@ -2,82 +2,78 @@
 
 namespace NExtends.Primitives.DateTimes
 {
-    public class Period : ITimeBlock, IEquatable<Period>
+    public struct Period : ITimeBlock
     {
-        public DateTime Start { get; private set; }
-        public DateTime End { get; private set; }
-        public TimeSpan Duration { get; private set; }
+        public DateTime StartsAt { get; }
+        public DateTime EndsAt { get; }
+        public TimeSpan Duration { get; }
 
-        public DateTime StartsAt => Start;
-        public DateTime EndsAt => End;
+        public Date StartsOn { get; }
+        public Date EndsOn { get; }
 
-        void ITimeBlock.ChangeStartsAt(DateTime startsAt)
-        {
-            if (startsAt > End)
-            {
-                throw new NegativeDurationException(nameof(startsAt));
-            }
+        [Obsolete("You should use StartsAt or StartsOn instead")]
+        public DateTime Start => StartsAt;
+        [Obsolete("You should use EndsAt or EndsOn instead")]
+        public DateTime End => EndsAt;
 
-            Start = startsAt;
-        }
-        void ITimeBlock.ChangeEndsAt(DateTime endsAt)
-        {
-            if (endsAt < Start)
-            {
-                throw new NegativeDurationException(nameof(endsAt));
-            }
+        public Period(DateTime startsAt, DateTime endsAt)
+            : this(startsAt, endsAt, endsAt - startsAt) { }
 
-            End = endsAt;
-        }
-        void ITimeBlock.ChangeDuration(TimeSpan duration)
+        public Period(DateTime startsAt, DateTime endsAt, TimeSpan duration)
         {
             if (duration < TimeSpan.Zero)
             {
                 throw new NegativeDurationException(nameof(duration));
             }
 
+            StartsAt = startsAt;
+            EndsAt = endsAt;
             Duration = duration;
+
+            StartsOn = new Date(startsAt);
+            EndsOn = new Date(startsAt);
         }
 
-        public Period(DateTime start, DateTime end)
+        public Period(Date startsOn, Date endsOn)
         {
-            Start = start;
-            End = end;
-            Duration = end - start;
+            StartsOn = startsOn;
+            EndsOn = endsOn;
+            StartsAt = new DateTime(startsOn.Ticks);
+            EndsAt = new DateTime(endsOn.Ticks);
+            Duration = endsOn - startsOn;
 
             if (Duration < TimeSpan.Zero)
             {
-                throw new NegativeDurationException(nameof(end));
+                throw new NegativeDurationException(nameof(endsOn));
             }
         }
 
-        public virtual bool Equals(Period other)
+        ITimeBlock ITimeBlock.ChangeStartsAt(DateTime startsAt)
         {
-            if (other == null) { return false; }
-
-            return Start == other.Start &&
-                End == other.End &&
-                Duration == other.Duration;
-        }
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) { return false; }
-            if (ReferenceEquals(this, obj)) { return true; }
-            if (obj.GetType() != GetType()) { return false; }
-
-            return Equals(obj as Period);
-        }
-        public override int GetHashCode()
-        {
-            //cf http://www.aaronstannard.com/overriding-equality-in-dotnet/
-            unchecked
+            if (startsAt > EndsAt)
             {
-                var hashCode = 13;
-                hashCode = (hashCode * 397) ^ Start.GetHashCode();
-                hashCode = (hashCode * 397) ^ End.GetHashCode();
-                hashCode = (hashCode * 397) ^ Duration.GetHashCode();
-                return hashCode;
+                throw new NegativeDurationException(nameof(startsAt));
             }
+
+            return new Period(startsAt, EndsAt);
+        }
+        ITimeBlock ITimeBlock.ChangeEndsAt(DateTime endsAt)
+        {
+            if (endsAt < StartsAt)
+            {
+                throw new NegativeDurationException(nameof(endsAt));
+            }
+
+            return new Period(StartsAt, endsAt);
+        }
+        ITimeBlock ITimeBlock.ChangeDuration(TimeSpan duration)
+        {
+            if (duration < TimeSpan.Zero)
+            {
+                throw new NegativeDurationException(nameof(duration));
+            }
+
+            return new Period(StartsAt, EndsAt, duration);
         }
     }
 }

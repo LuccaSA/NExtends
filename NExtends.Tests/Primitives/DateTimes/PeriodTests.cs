@@ -14,8 +14,8 @@ namespace NExtends.Tests.Primitives.DateTimes
 
             var period = new Period(startsOn, endsOn);
 
-            Assert.Equal(startsOn, period.Start);
-            Assert.Equal(endsOn, period.End);
+            Assert.Equal(startsOn, period.StartsAt);
+            Assert.Equal(endsOn, period.EndsAt);
         }
 
         [Fact]
@@ -26,8 +26,8 @@ namespace NExtends.Tests.Primitives.DateTimes
 
             var period = new Period(startsAt, endsAt);
 
-            Assert.Equal(startsAt, period.Start);
-            Assert.Equal(endsAt, period.End);
+            Assert.Equal(startsAt, period.StartsAt);
+            Assert.Equal(endsAt, period.EndsAt);
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace NExtends.Tests.Primitives.DateTimes
 
             ITimeBlock period = new Period(startAndEnd, startAndEnd);
 
-            period.ChangeDuration(TimeSpan.FromSeconds(1));
+            period = period.ChangeDuration(TimeSpan.FromSeconds(1));
 
             Assert.Equal(TimeSpan.FromSeconds(1), period.Duration);
             Assert.Equal(TimeSpan.FromSeconds(0), period.EndsAt - period.StartsAt);

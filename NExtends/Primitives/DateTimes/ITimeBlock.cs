@@ -8,8 +8,8 @@ namespace NExtends.Primitives.DateTimes
         DateTime EndsAt { get; }
         TimeSpan Duration { get; }
 
-        void ChangeStartsAt(DateTime startsAt);
-        void ChangeEndsAt(DateTime endsAt);
-        void ChangeDuration(TimeSpan duration);
+        ITimeBlock ChangeStartsAt(DateTime startsAt);
+        ITimeBlock ChangeEndsAt(DateTime endsAt);
+        ITimeBlock ChangeDuration(TimeSpan duration);
     }
 }
