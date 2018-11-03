@@ -31,7 +31,7 @@ namespace NExtends.Primitives.DateTimes
     [Serializable]
     public struct Date : IComparable, IFormattable, ISerializable, IComparable<Date>, IEquatable<Date>
     {
-        private DateTime _dt;
+        private readonly DateTime _dt;
 
         public static readonly Date MaxValue = new Date(DateTime.MaxValue);
         public static readonly Date MinValue = new Date(DateTime.MinValue);
@@ -182,14 +182,14 @@ namespace NExtends.Primitives.DateTimes
             return d1.CompareTo(d2);
         }
 
-        public int CompareTo(Date value)
+        public int CompareTo(Date other)
         {
-            return this._dt.CompareTo(value._dt);
+            return this._dt.CompareTo(other._dt);
         }
 
-        public int CompareTo(object value)
+        public int CompareTo(object obj)
         {
-            return this._dt.CompareTo(value);
+            return this._dt.CompareTo(obj);
         }
 
         public static int DaysInMonth(int year, int month)
@@ -197,14 +197,14 @@ namespace NExtends.Primitives.DateTimes
             return DateTime.DaysInMonth(year, month);
         }
 
-        public bool Equals(Date value)
+        public bool Equals(Date other)
         {
-            return this._dt.Equals(value._dt);
+            return this._dt.Equals(other._dt);
         }
 
-        public override bool Equals(object value)
+        public override bool Equals(object obj)
         {
-            return value is Date && this._dt.Equals(((Date)value)._dt);
+            return obj is Date && this._dt.Equals(((Date)obj)._dt);
         }
 
         public override int GetHashCode()
@@ -297,9 +297,9 @@ namespace NExtends.Primitives.DateTimes
             return this._dt.ToString(format);
         }
 
-        public string ToString(string format, IFormatProvider provider)
+        public string ToString(string format, IFormatProvider formatProvider)
         {
-            return this._dt.ToString(format, provider);
+            return this._dt.ToString(format, formatProvider);
         }
 
         public static bool TryParse(string s, out Date result)
