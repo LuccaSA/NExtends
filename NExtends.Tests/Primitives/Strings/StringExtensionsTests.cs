@@ -67,6 +67,7 @@ namespace NExtends.Tests.Primitives.Strings
             Assert.True(result);
         }
 
+        [Theory]
         [InlineData("toto")]
         [InlineData(null)]
         [InlineData("")]

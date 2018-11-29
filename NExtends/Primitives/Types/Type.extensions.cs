@@ -39,32 +39,52 @@ namespace NExtends.Primitives.Types
 			return member.IsDefined(typeof(T)) ? (T)member.GetCustomAttributes(typeof(T), false).ElementAt(0) : null;
 		}
 
-		public static bool IsEnumerableOrArray(this Type T)
+		public static bool IsEnumerableOrArray(this Type type)
 		{
-			return (typeof(IEnumerable).IsAssignableFrom(T) && T != typeof(string)) || T.IsArray;
+			return (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string)) || type.IsArray;
 		}
 
-		public static Type GetEnumerableOrArrayElementType(this Type T)
-		{
-			if (!IsEnumerableOrArray(T))
-			{
-				return T;
-			}
-			// On est sûr que c'est un type Enumerable<> ou un Array
-			// Donc si c'est pas un Array, on retourne le type generique
-			if (T.IsArray)
-			{
-				return T.GetElementType();
-			}
-			else
-			{
-				//gère aussi IEnumerable<T>
-				return (T.GetTypeInfo().GetInterface("IEnumerable`1") ?? T).GetGenericArguments().FirstOrDefault();
-			}
-		}
+        /// <summary>
+        /// Returns T in IEnumerable&lt;T&gt;, object in IEnumerable, elementType in arrays, or the type itself otherwise.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Type GetEnumerableOrArrayElementType(this Type type)
+        {
+            if (type == typeof(string))
+            {
+                return typeof(string);
+            }
+
+            if (type.IsArray)
+            {
+                return type.GetElementType();
+            }
+
+            var enumType = type.GetInterfaces()
+                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
+
+            if (enumType != null)
+            {
+                return enumType;
+            }
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            {
+                return type.GetGenericArguments()[0];
+            }
+
+            if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                return typeof(object);
+            }
+
+            return type;
+        }
 
 		/// <summary>
-		/// Given Fun&lt;T&gt; we return T
+		/// Given Func&lt;T&gt; we return T
 		/// </summary>
 		/// <param name="T"></param>
 		/// <returns></returns>
