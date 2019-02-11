@@ -125,6 +125,18 @@ namespace NExtends.Primitives.Generics
         }
 
         /// <summary>
+        /// Merge 2 dictionaries containing collection type values. If dictionaries have similar keys, an intersection of collections is applied.
+        /// </summary>
+        public static Dictionary<TKey, ICollection<TValue>> Merge<TKey, TValue>(this Dictionary<TKey, ICollection<TValue>> first, Dictionary<TKey, ICollection<TValue>> second)
+        {
+            IEnumerable<KeyValuePair<TKey, ICollection<TValue>>> firstDictionary = first;
+            IEnumerable<KeyValuePair<TKey, ICollection<TValue>>> secondDictionary = second;
+            return firstDictionary.Concat(secondDictionary)
+                .GroupBy(d => d.Key)
+                .ToDictionary(g => g.Key, g => (ICollection<TValue>)g.SelectMany(kvp => kvp.Value).ToList());
+        }
+
+        /// <summary>
         /// Check if a IEnumerable contains all values present in the other, with the same number of occurences
         /// </summary>
         public static bool Contains<T>(this IEnumerable<T> first, IEnumerable<T> second)
