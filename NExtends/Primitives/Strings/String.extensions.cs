@@ -228,18 +228,22 @@ namespace NExtends.Primitives.Strings
         }
 
         /// <summary>
-        /// Equivalent à Convert.ChangeType mais gère mieux les Enum et les TimeSpan
+        /// Equivalent à Convert.ChangeType mais gère mieux les Enum et les TimeSpan, les dates
         /// </summary>
         /// <param name="value"></param>
         /// <param name="propertyType"></param>
         /// <returns></returns>
         public static object ChangeType(this string value, Type propertyType, IFormatProvider culture)
         {
-            if (propertyType.GetTypeInfo().IsEnum)
+            if (propertyType == typeof(string))
+            {
+                return value;
+            }
+            else if (propertyType.IsEnum)
             {
                 return Enum.Parse(propertyType, value, true);
             }
-            else if (propertyType.Name.Equals("TimeSpan"))
+            else if (propertyType == typeof(TimeSpan))
             {
                 return TimeSpan.Parse(value, culture);
             }
@@ -257,6 +261,18 @@ namespace NExtends.Primitives.Strings
             }
             else
             {
+                if (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?))
+                {
+                    switch (value)
+                    {
+                        case "today": return DateTime.Today;
+                        case "now": return DateTime.Now;
+                        case "tomorrow": return DateTime.Today.AddDays(1);
+                        case "yesterday": return DateTime.Today.AddDays(-1);
+                        default:
+                            break;
+                    }
+                }
                 return Convert.ChangeType(value, propertyType, culture);
             }
         }
