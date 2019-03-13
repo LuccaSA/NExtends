@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <ProjectGuid>{9EA0C475-5A2B-4589-8526-520DEAF6111F}</ProjectGuid>
   </PropertyGroup>
 
@@ -14,10 +14,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
 	  <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Primitives\DateTimes\DateTime.extensions.tests.cs" />
   </ItemGroup>
 
   <ItemGroup>
