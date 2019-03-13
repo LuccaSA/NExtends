@@ -1,7 +1,4 @@
-﻿*/bin/*
-*/obj/*
-
-*.suo
+﻿*.suo
 *.dll
 *.pdb
 *.cache
@@ -19,3 +16,6 @@ packages/# NuGet Packages
 /ComputeVersion.ps1
 /.versionCounter
 /NExtends/*.user
+
+*/bin
+*/obj
