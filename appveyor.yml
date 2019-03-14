@@ -50,7 +50,7 @@ build_script:
 - ps: dotnet build NExtends.sln -c Debug -v minimal 
 
 test_script:
-- OpenCover.4.7.922\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f netcoreapp2.0 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
+- OpenCover.4.7.922\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f netcoreapp2.1 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
 - OpenCover.4.7.922\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f net461 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -mergeoutput -output:coverage-opencover.xml
 - dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
 - Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
