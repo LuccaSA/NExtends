@@ -120,7 +120,7 @@ namespace NExtends.Expressions
 			var result = base.VisitMember(node);
 
 			//Même membre, branché sur le paramètre => on remplace
-			if (CurrentNodeDependsOnPreviousParameter && node.Member == Reducer.Member)
+			if (CurrentNodeDependsOnPreviousParameter && AreEquals(node.Member, Reducer.Member))
 			{
 				CurrentNodeDependsOnPreviousParameter = false;
 				result = Parameter;
@@ -131,7 +131,14 @@ namespace NExtends.Expressions
 			return result;
 		}
 
-		protected override Expression VisitParameter(ParameterExpression node)
+        private bool AreEquals(MemberInfo member1, MemberInfo member2)
+        {
+            return member1.DeclaringType == member2.DeclaringType
+                && member1.Name == member2.Name;
+        }
+
+
+        protected override Expression VisitParameter(ParameterExpression node)
 		{
 			//on sauvegarde la dépendance du noeud courant au paramètre d'entrée
 			CurrentNodeDependsOnPreviousParameter = true;

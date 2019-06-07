@@ -1,6 +1,7 @@
 ﻿using NExtends.Expressions;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace NExtends.Tests.Expressions
@@ -20,9 +21,9 @@ namespace NExtends.Tests.Expressions
 
 	public class ExpressionReducerTests
 	{
-		DateTime today = DateTime.Today;
-		List<int> elements = new List<int> { 0, 1, 2 };
-		UserDate fakeUd = new UserDate(new User(), DateTime.Today);
+        readonly DateTime today = DateTime.Today;
+        readonly List<int> elements = new List<int> { 0, 1, 2 };
+        readonly UserDate fakeUd = new UserDate(new User(), DateTime.Today);
 
 		[Fact]
 		public void ExpressionReducerEmptyLogic()
@@ -111,5 +112,22 @@ namespace NExtends.Tests.Expressions
 
 			Assert.Equal("u => (u.Content != null)", result.ToString());
 		}
-	}
+
+        abstract class AbstractTruc
+        {
+            public User User { get; set; }
+        }
+
+        class ConcreteBiduleContainer : AbstractTruc
+        {
+            public User User2 { get; set; }
+        }
+
+        [Fact]
+        public void ExpressionReducerAbstractClassMember()
+        {
+            var result = ExpressionReducer<ConcreteBiduleContainer, User>.Reduce(bc => bc.User.Id != 0 && bc.User2.Id != 23, u => u.User, true);
+            Assert.Equal("u => (u.Id != 0)", result.ToString());
+        }
+    }
 }
