@@ -364,13 +364,18 @@ namespace NExtends.Primitives.DateTimes
                 // Date we look => last date of previous range
                 var period = GetIncludingPeriod(startOfPeriodSeek.AddDays(-1), timeSliceMode);
 
-                periods.Add(new Period(period.Start, period.End));
+                periods.Add(new Period(period.StartsAt, period.EndsAt));
 
                 // for next iteration
-                startOfPeriodSeek = period.Start;
+                startOfPeriodSeek = period.StartsAt;
             }
 
             return periods;
+        }
+
+        public static Date ToDate(this DateTime dt)
+        {
+            return new Date(dt);
         }
     }
 }
