@@ -53,7 +53,7 @@ test_script:
 - dotnet test -f netcoreapp3.1 /p:DebugType=full -c Debug --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory:./coverage
 - reportgenerator -reports:./coverage/*/*.xml -targetdir:./sonarCoverage -reporttypes:SonarQube
 - dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
-- Codecov.1.12.3\tools\codecov -f "**/coverage.cobertura.xml"
+- Codecov.1.12.3\tools\codecov -f "./coverage/*/coverage.cobertura.xml"
 
 after_test:
 - ps: dotnet pack NExtends\NExtends.csproj --configuration Release /p:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /p:SourceLinkEnabled=true /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
