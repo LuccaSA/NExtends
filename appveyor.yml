@@ -35,7 +35,7 @@ install:
   - ps: Update-AppveyorBuild -Version $version.Semver
   - dotnet tool install --global dotnet-sonarscanner
   - nuget install OpenCover -Version 4.6.519
-  - nuget install Codecov -Version 1.0.5
+  - nuget install Codecov -Version 1.12.3
 
 before_build:
 - dotnet restore
@@ -53,7 +53,7 @@ test_script:
 - OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f netcoreapp2.0 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -output:coverage-opencover.xml
 - OpenCover.4.6.519\tools\OpenCover.Console.exe -returntargetcode -oldstyle -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test -f net461 /p:DebugType=full -c Debug .\NExtends.Tests\NExtends.Tests.csproj" -filter:"+[NExtends*]* -[NExtends.Tests*]*" -excludebyattribute:"*.ExcludeFromCodeCoverage*" -mergeoutput -output:coverage-opencover.xml
 - dotnet sonarscanner end /d:"sonar.login=%SONAR_TOKEN%"
-- Codecov.1.0.5\tools\codecov -f coverage-opencover.xml
+- Codecov.1.12.3\tools\codecov -f coverage-opencover.xml
 
 after_test:
 - ps: dotnet pack NExtends\NExtends.csproj --configuration Release /p:$("VersionPrefix="+$version.Prefix+";VersionSuffix="+$version.Suffix) /p:SourceLinkEnabled=true /p:PackageVersion=$env:APPVEYOR_BUILD_VERSION -o artifacts
