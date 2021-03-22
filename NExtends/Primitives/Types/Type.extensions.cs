@@ -406,6 +406,10 @@ namespace NExtends.Primitives.Types
 			{
 				return o.ToString();
 			}
+			else if (typeof(T) == typeof(Guid))
+			{
+				return Guid.Parse(o.ToString());
+			}
 
 			throw new NotImplementedException();
 		}
