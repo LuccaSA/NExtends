@@ -19,7 +19,7 @@ namespace NExtends.Tests.Primitives.Generics
                 { "2","2"}
             };
 
-            Dictionary<string, string> newDictionary = dic.Where(i => i.Key == "1").ToDictionary();
+            Dictionary<string, string> newDictionary = NExtends.Primitives.Generics.GenericExtensions.ToDictionary(dic.Where(i => i.Key == "1"));
 
             Assert.True(newDictionary.ContainsKey("1"));
             Assert.Single(newDictionary);
@@ -27,9 +27,9 @@ namespace NExtends.Tests.Primitives.Generics
             Assert.Throws<ArgumentNullException>(() =>
             {
                 IEnumerable<KeyValuePair<string, string>> nulled = null;
-                nulled.ToDictionary();
+                NExtends.Primitives.Generics.GenericExtensions.ToDictionary(nulled);
             });
-            Assert.Empty(Enumerable.Empty<KeyValuePair<string, string>>().ToDictionary());
+            Assert.Empty(NExtends.Primitives.Generics.GenericExtensions.ToDictionary(Enumerable.Empty<KeyValuePair<string, string>>()));
         }
 
         [Fact]
@@ -186,7 +186,7 @@ namespace NExtends.Tests.Primitives.Generics
             Assert.Equal(source.IsEquivalentTo(other, new TestDataEqualityComparer()), expected);
         }
 
-        public static TheoryData EquivalenceStructData()
+        public static TheoryData<int[], int[], bool> EquivalenceStructData()
         {
             var theory = new TheoryData<int[], int[], bool>();
             foreach (var data in Generate())
@@ -196,7 +196,7 @@ namespace NExtends.Tests.Primitives.Generics
             return theory;
         }
 
-        public static TheoryData EquivalenceClassData()
+        public static TheoryData<GenericsExtensionsTests.Tdata[], GenericsExtensionsTests.Tdata[], bool> EquivalenceClassData()
         {
             var theory = new TheoryData<Tdata[], Tdata[], bool>();
             foreach (var data in Generate())

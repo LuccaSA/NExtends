@@ -3,9 +3,7 @@
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>12.0</LangVersion>
     <DefaultItemExcludes>$(DefaultItemExcludes);*.DotSettings;*.ncrunchproject</DefaultItemExcludes>
   </PropertyGroup>
 
@@ -16,7 +14,7 @@
     <Authors>Lucca team</Authors>
     <Description>NExtends</Description>
     <PackageProjectUrl>https://github.com/LuccaSA/NExtends/</PackageProjectUrl>
-    <Copyright>Copyright Lucca 2020</Copyright>
+    <Copyright>Copyright Lucca 2024</Copyright>
   </PropertyGroup>
 
 </Project>
