@@ -19,7 +19,8 @@ namespace NExtends.Tests.Primitives.Generics
                 { "2","2"}
             };
 
-            Dictionary<string, string> newDictionary = dic.Where(i => i.Key == "1").ToDictionary();
+            // Called statically: since .NET 8, System.Linq has its own ToDictionary() for key/value pairs.
+            Dictionary<string, string> newDictionary = GenericExtensions.ToDictionary(dic.Where(i => i.Key == "1"));
 
             Assert.True(newDictionary.ContainsKey("1"));
             Assert.Single(newDictionary);
@@ -27,9 +28,9 @@ namespace NExtends.Tests.Primitives.Generics
             Assert.Throws<ArgumentNullException>(() =>
             {
                 IEnumerable<KeyValuePair<string, string>> nulled = null;
-                nulled.ToDictionary();
+                GenericExtensions.ToDictionary(nulled);
             });
-            Assert.Empty(Enumerable.Empty<KeyValuePair<string, string>>().ToDictionary());
+            Assert.Empty(GenericExtensions.ToDictionary(Enumerable.Empty<KeyValuePair<string, string>>()));
         }
 
         [Fact]
