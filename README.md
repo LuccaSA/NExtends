@@ -1,8 +1,7 @@
 # NExtends
 Extension C#, netstandard 2.0
 
-[![Build status](https://ci.appveyor.com/api/projects/status/4lokrcxgt7s0hyub?svg=true)](https://ci.appveyor.com/project/LuccaIntegration/NExtends)
-[![codecov](https://codecov.io/gh/LuccaSA/NExtends/branch/master/graph/badge.svg)](https://codecov.io/gh/LuccaSA/NExtends)
+[![CI](https://github.com/LuccaSA/NExtends/actions/workflows/ci.yml/badge.svg)](https://github.com/LuccaSA/NExtends/actions/workflows/ci.yml)
 [![Sonarcloud coverage](https://sonarcloud.io/api/project_badges/measure?project=NExtends&metric=coverage)](https://sonarcloud.io/dashboard?id=NExtends)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=NExtends&metric=alert_status)](https://sonarcloud.io/dashboard?id=NExtends)
 [![Sonarcloud Debt](https://sonarcloud.io/api/project_badges/measure?project=NExtends&metric=sqale_index)](https://sonarcloud.io/dashboard?id=NExtends)
