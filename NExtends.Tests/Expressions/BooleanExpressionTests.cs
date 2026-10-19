@@ -87,8 +87,9 @@ namespace NExtends.Tests.Expressions
 		[Fact]
 		public void BooleanExpressionWithParametersOnlyInRecursiveLambda()
 		{
-			Expression<Func<int[], bool>> containsOne = a => BooleanExpressionTests.tested.All(i => a.Contains(i));
-			Expression<Func<int[], bool>> doesNotContainsOne = b => BooleanExpressionTests.tested.All(i => !b.Contains(i));
+			// Enumerable.Contains spelled out: since C# 14, a.Contains(i) on an array binds to the span overload.
+			Expression<Func<int[], bool>> containsOne = a => BooleanExpressionTests.tested.All(i => Enumerable.Contains(a, i));
+			Expression<Func<int[], bool>> doesNotContainsOne = b => BooleanExpressionTests.tested.All(i => !Enumerable.Contains(b, i));
 
 			var isFalse = containsOne.AndAlso(doesNotContainsOne);
 			var isTrue = containsOne.OrElse(doesNotContainsOne);
